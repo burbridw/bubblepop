@@ -82,11 +82,60 @@ class Bubbles {
     }
 }
 
+const mouseObj = {
+    x: window.innerWidth/2,
+    y: window.innerHeight/2,
+    click: false
+}
+
+window.addEventListener("mousemove",(e)=>{
+    mouseObj.x = e.x
+    mouseObj.y = e.y
+})
+
+class Player {
+    constructor() {
+        this.size = 25
+        this.x = window.innerWidth/2
+        this.y = window.innerHeight/2
+    }
+    update() {
+        if ( mouseObj.click ) {
+            const dx = this.x - mouseObj.x
+            const dy = this.y - mouseObj.y
+            this.x -= dx/20
+            this.y -= dy/20
+        }
+    }
+    draw() {
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.size,0,Math.PI*2)
+        ctx.fillstyle = "black"
+        ctx.fill()
+    }
+}
+
+const thePlayer = new Player
+
+window.addEventListener("mousedown",()=>{
+    mouseObj.click = true
+})
+window.addEventListener("mouseup",()=>{
+    mouseObj.click = false
+})
+
+
 function gen() {
     for ( let i = 0; i < 16; i++ ) {
         bubblesArr.push( new Bubbles() )
     }
 }
+
+function drawPlayer() {
+    thePlayer.update()
+    thePlayer.draw()
+}
+
 function drawBubbles() {
     for ( let i = 0; i < bubblesArr.length; i++ ) {
         bubblesArr[i].update()
@@ -177,6 +226,7 @@ function animate() {
     ctx.clearRect( 0, 0, canvas1.width, canvas1.height)
     detectCollission()
     drawBubbles()
+    drawPlayer()
     if ( frameCount === 61) {
         frameCount = 0
     }
