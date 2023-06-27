@@ -2,6 +2,13 @@ const ctx = canvas1.getContext("2d")
 canvas1.width = window.innerWidth
 canvas1.height = window.innerHeight
 const bubblesArr = []
+
+window.addEventListener("resize",()=>{
+    canvas1.width = window.innerWidth
+    canvas1.height = window.innerHeight
+})
+
+
 // window.addEventListener("load",()=>{
 //     class game {
 //         constructor(width, height) {
@@ -29,6 +36,8 @@ const bubblesArr = []
 
 const centerOffSetX = 128
 const centerOffSetY = 128
+const playerSize = 100
+const playerCollissionRange = playerSize/2
 
 class Bubbles {
     constructor() {
@@ -95,9 +104,14 @@ window.addEventListener("mousemove",(e)=>{
 
 class Player {
     constructor() {
-        this.size = 25
+        this.size = playerSize
         this.x = window.innerWidth/2
         this.y = window.innerHeight/2
+        this.image = playerimage
+        this.sx = 0
+        this.sy = 0
+        this.width = 1992/4
+        this.height = 967/3
     }
     update() {
         if ( mouseObj.click ) {
@@ -108,10 +122,11 @@ class Player {
         }
     }
     draw() {
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size,0,Math.PI*2)
-        ctx.fillstyle = "black"
-        ctx.fill()
+        ctx.drawImage(this.image, this.sx, this.sy, this.width, this.height, this.x-playerSize/2, this.y-playerSize/2, this.size, this.size)
+        // ctx.beginPath()
+        // ctx.arc(this.x, this.y, playerCollissionRange,0,Math.PI*2)
+        // ctx.strokestyle = "black"
+        // ctx.stroke()
     }
 }
 
@@ -147,14 +162,14 @@ function drawBubbles() {
         }
     }
 }
-canvas1.addEventListener("click",(event)=>{
-    bubblesArr.forEach( popper=>{
-        const mouseDistanceForPop = Math.hypot(event.x - (popper.x+centerOffSetX), event.y - (popper.y+centerOffSetY))
-        if ( mouseDistanceForPop < 92) {
-            bubblePop(popper)
-        }
-    })
-})
+// canvas1.addEventListener("click",(event)=>{
+//     bubblesArr.forEach( popper=>{
+//         const mouseDistanceForPop = Math.hypot(event.x - (popper.x+centerOffSetX), event.y - (popper.y+centerOffSetY))
+//         if ( mouseDistanceForPop < 92) {
+//             bubblePop(popper)
+//         }
+//     })
+// })
 
 
 function bubblePop(target) {
@@ -195,7 +210,36 @@ function detectCollission() {
     })
 }
 
-window.addEventListener("click",detectCollission)
+function detectPlayerPop() {
+    bubblesArr.forEach( collider => {
+        const collisionDistance = Math.hypot(thePlayer.x - (collider.x + centerOffSetX), thePlayer.y - (collider.y + centerOffSetY))
+        if ( collisionDistance < playerCollissionRange + 91 ) {
+            bubblePop(collider)
+        }
+    })
+}
+
+let playerFrameCol = 0
+let playerFrameRow = 0
+
+
+function playerSwimAnimation() {
+    if ( frameCount%6 === 0 ) {
+        playerFrameCol++
+        if ( playerFrameCol > 3) {
+            playerFrameRow++
+            playerFrameCol = 0
+        }
+        if ( playerFrameRow > 2 ) {
+            playerFrameRow = 0
+        }
+        thePlayer.sx = (thePlayer.width*playerFrameCol)
+        thePlayer.sy = (thePlayer.height*playerFrameRow)
+    }
+}
+
+
+window.addEventListener("click",playerSwimAnimation)
 
 
 function sendBubbles() {
@@ -224,7 +268,9 @@ let bubbleY = window.innerHeight
 function animate() {
     frameCount++
     ctx.clearRect( 0, 0, canvas1.width, canvas1.height)
+    playerSwimAnimation()
     detectCollission()
+    detectPlayerPop()
     drawBubbles()
     drawPlayer()
     if ( frameCount === 61) {
