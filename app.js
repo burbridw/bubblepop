@@ -6,45 +6,44 @@ const bubblesArr = []
 window.addEventListener("resize",()=>{
     canvas1.width = window.innerWidth
     canvas1.height = window.innerHeight
+    bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
+    bubbleFrame = window.innerWidth/8
+    playerSize = bubbleFrame/2
+    for ( let i = 0; i < bubblesArr.length; i++ ) {
+        bubblesArr[i].update()
+        bubblesArr[i].draw()
+    }
+    thePlayer.update()
+    thePlayer.draw()
+    playerCollissionRange = playerSize/2
 })
 
+const frameSize = 512
+const centerOffSetX = frameSize/4
+const centerOffSetY = frameSize/4
+let bubbleFrame = window.innerWidth/8
+let playerSize = bubbleFrame/2
+let playerCollissionRange = playerSize/2
 
-// window.addEventListener("load",()=>{
-//     class game {
-//         constructor(width, height) {
-//             this.width = width
-//             this.height = height
-//         }
-//         update() {
+let bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
 
-//         }
-//         draw() {
-
-//         }
-//     }
-// })
-
-// class bubble {
-//     constructor(game){
-//         this.game = game
-//         this.width = 300
-//         this.height = 300
-//     }
-// }
-
-// const bubble = document.getElementById("bubble")
-
-const centerOffSetX = 128
-const centerOffSetY = 128
-const playerSize = 100
-const playerCollissionRange = playerSize/2
+canvas1.addEventListener("touchstart",touchCanvas)
+canvas1.addEventListener("touchmove",touchCanvas)
+function touchCanvas(event) {
+    event.preventDefault()
+    const touch = event.touches[0]
+    mouseObj.x = touch.pageX
+    mouseObj.y = touch.pageY
+    mouseObj.click = true
+}
+canvas1.addEventListener("touchend",()=>{
+    mouseObj.click = false
+})
 
 class Bubbles {
     constructor() {
-        // this.size = (Math.random() * 325) + 25
-        this.size = 256
+        this.size = bubbleFrame
         this.x = Math.random()*(window.innerWidth-this.size)
-        // this.x = this.size*(Math.random()*((window.innerWidth/this.size)-this.size))
         this.y = window.innerHeight + this.size
         this.sx = sourceWidth
         this.speedX = Math.random()*3 -1.5
@@ -74,6 +73,7 @@ class Bubbles {
         }
         this.y -= this.speedY
         this.x += this.speedX
+        this.size = bubbleFrame
     }
     draw() {
     ctx.drawImage(this.image, this.sx, startHeight, increment, 512, this.x, this.y, this.size, this.size)
@@ -84,15 +84,23 @@ class Bubbles {
     //     ctx.textAlign = "center"
     //     ctx.fillText(this.text,this.x+(this.size/2)-20,this.y+(this.size/2)-10)
     // }
+    ctx.beginPath()
+    ctx.arc(this.x+this.size/2,this.y+this.size/2,bubbleSize,0,Math.PI*2)
+    ctx.strokeStyle = "red"
+    ctx.stroke()
+    ctx.closePath()
     // ctx.beginPath()
-    // ctx.arc(this.x+centerOffSetX,this.y+centerOffSetY,91,0,Math.PI*2)
-    // ctx.strokeStyle = "black"
+    // ctx.moveTo(this.x,this.y)
+    // ctx.lineTo(this.x+this.size, this.y)
+    // ctx.lineTo(this.x+this.size, this.y+this.size)
+    // ctx.lineTo(this.x,this.y+this.size)
+    // ctx.lineTo(this.x,this.y)
     // ctx.stroke()
     }
 }
 
 const mouseObj = {
-    x: window.innerWidth/2,
+    x: window.innerWidth/2-1,
     y: window.innerHeight/2,
     click: false
 }
@@ -107,28 +115,50 @@ class Player {
         this.size = playerSize
         this.x = window.innerWidth/2
         this.y = window.innerHeight/2
-        this.image = playerimage
+        this.image = playerimageleft
         this.sx = 0
         this.sy = 0
         this.width = 1992/4
         this.height = 967/3
+        this.angle = 0
     }
     update() {
+        const dx = this.x - mouseObj.x
+        const dy = this.y - mouseObj.y
+        let theta = Math.atan2(dy, dx)
+        this.angle = theta
         if ( mouseObj.click ) {
-            const dx = this.x - mouseObj.x
-            const dy = this.y - mouseObj.y
-            this.x -= dx/20
-            this.y -= dy/20
+            this.x -= dx/40
+            this.y -= dy/40
         }
+        this.size = playerSize
     }
     draw() {
-        ctx.drawImage(this.image, this.sx, this.sy, this.width, this.height, this.x-playerSize/2, this.y-playerSize/2, this.size, this.size)
+        if ( this.x > mouseObj.x ) {
+            this.image = playerimageleft
+        } else {
+            this.image = playerimageinv
+        }
+        ctx.save()
+        ctx.translate(this.x,this.y)
+        ctx.rotate(this.angle)
+        ctx.drawImage(this.image, this.sx, this.sy, this.width, this.height, 0-playerSize/2, 0-playerSize/2, this.size, this.size)
+        ctx.restore()
         // ctx.beginPath()
         // ctx.arc(this.x, this.y, playerCollissionRange,0,Math.PI*2)
         // ctx.strokestyle = "black"
         // ctx.stroke()
+        // ctx.beginPath()
+        // ctx.moveTo(this.x,this.y)
+        // ctx.lineTo(this.x+bubbleFrame,this.y)
+        // ctx.lineTo(this.x+bubbleFrame, this.y+bubbleFrame)
+        // ctx.lineTo(this.x, this.y+bubbleFrame)
+        // ctx.lineTo(this.x,this.y)
+        // ctx.strokeStyle = "black"
+        // ctx.stroke()
     }
 }
+
 
 const thePlayer = new Player
 
@@ -140,11 +170,6 @@ window.addEventListener("mouseup",()=>{
 })
 
 
-function gen() {
-    for ( let i = 0; i < 16; i++ ) {
-        bubblesArr.push( new Bubbles() )
-    }
-}
 
 function drawPlayer() {
     thePlayer.update()
@@ -162,6 +187,12 @@ function drawBubbles() {
         }
     }
 }
+function gen() {
+    for ( let i = 0; i < 16; i++ ) {
+        bubblesArr.push( new Bubbles() )
+    }
+}
+
 // canvas1.addEventListener("click",(event)=>{
 //     bubblesArr.forEach( popper=>{
 //         const mouseDistanceForPop = Math.hypot(event.x - (popper.x+centerOffSetX), event.y - (popper.y+centerOffSetY))
@@ -183,13 +214,21 @@ function bubblePop(target) {
         }
     },25)
 }
+function detectPlayerPop() {
+    bubblesArr.forEach( collider => {
+        const collisionDistance = Math.hypot(thePlayer.x - (collider.x + collider.size/2), thePlayer.y - (collider.y + collider.size/2))
+        if ( collisionDistance < playerCollissionRange + bubbleSize ) {
+            bubblePop(collider)
+        }
+    })
+}
 
 function detectCollission() {
     bubblesArr.forEach( collider=>{
         bubblesArr.forEach( other=> {
             if ( bubblesArr.indexOf(collider)!=bubblesArr.indexOf(other) ) {
                 const collisionDistance = Math.hypot((collider.x+centerOffSetX) - (other.x+centerOffSetX), (collider.y+centerOffSetY) - (other.y+centerOffSetY))
-                if ( collisionDistance < 182) {
+                if ( collisionDistance < bubbleSize*2) {
                     if ( collider.x > other.x) {
                         collider.speedX += 0.2
                         other.speedX -= 0.2
@@ -210,14 +249,6 @@ function detectCollission() {
     })
 }
 
-function detectPlayerPop() {
-    bubblesArr.forEach( collider => {
-        const collisionDistance = Math.hypot(thePlayer.x - (collider.x + centerOffSetX), thePlayer.y - (collider.y + centerOffSetY))
-        if ( collisionDistance < playerCollissionRange + 91 ) {
-            bubblePop(collider)
-        }
-    })
-}
 
 let playerFrameCol = 0
 let playerFrameRow = 0
@@ -237,10 +268,6 @@ function playerSwimAnimation() {
         thePlayer.sy = (thePlayer.height*playerFrameRow)
     }
 }
-
-
-window.addEventListener("click",playerSwimAnimation)
-
 
 function sendBubbles() {
     const bubbleFlow = setInterval( ()=>{
@@ -262,8 +289,6 @@ let pop = false
 const offSet = increment/2
 
 let bubbleY = window.innerHeight
-
-// ctx.drawImage(bubble, sourceWidth, startHeight, 300, 300,(window.innerWidth/2)-offSet, bubbleY, 300, 300)
 
 function animate() {
     frameCount++

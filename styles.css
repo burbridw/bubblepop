@@ -24,6 +24,12 @@ body {
 #bubble {
     display: none;
 }
-#playerimage {
+#playerimageleft {
+    display: none;
+}
+#playerimageright {
+    display: none;
+}
+#playerimageinv {
     display: none;
 }
