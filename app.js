@@ -18,6 +18,9 @@ window.addEventListener("resize",()=>{
     playerCollissionRange = playerSize/2
 })
 
+const words = ["red","blue","green","bird","dog","cat","rice","bread","salad","car","bus","bike"]
+const correctWords = ["red","blue","green"]
+
 const frameSize = 512
 const centerOffSetX = frameSize/4
 const centerOffSetY = frameSize/4
@@ -50,7 +53,8 @@ class Bubbles {
         this.speedY = Math.random()*1 + 2
         this.image = bubble
         this.speedMod = Math.random()*1.5 - 1
-        // this.text = "things"
+        this.text = words[Math.floor(Math.random()*words.length)]
+        this.popped = false
     }
     update() {
         if ( this.speedX > 0.5) {
@@ -77,13 +81,11 @@ class Bubbles {
     }
     draw() {
     ctx.drawImage(this.image, this.sx, startHeight, increment, 512, this.x, this.y, this.size, this.size)
-    // if ( this.size > 200 ) {
-    //     ctx.fillStyle = "white"
-    //     ctx.font = "30px Arial"
-    //     ctx.textBaseline = "middle"
-    //     ctx.textAlign = "center"
-    //     ctx.fillText(this.text,this.x+(this.size/2)-20,this.y+(this.size/2)-10)
-    // }
+    ctx.fillStyle = "white"
+    ctx.font = "30px Architects Daughter"
+    ctx.textBaseline = "middle"
+    ctx.textAlign = "center"
+    ctx.fillText(this.text,this.x+(this.size/2),this.y+(this.size/2))
     ctx.beginPath()
     ctx.arc(this.x+this.size/2,this.y+this.size/2,bubbleSize,0,Math.PI*2)
     ctx.strokeStyle = "red"
@@ -205,7 +207,7 @@ function gen() {
 
 function bubblePop(target) {
     const popTimer = setInterval( ()=>{
-        if ( target.sx < increment*7 ) {
+        if ( target.sx < increment*8 ) {
             target.sx += increment
         } else {
             clearInterval(popTimer)
@@ -214,11 +216,20 @@ function bubblePop(target) {
         }
     },25)
 }
+function checkWord(text) {
+    if ( correctWords.includes(text) ) {
+        console.log("correct")
+    } else {
+        console.log("incorrect")
+    }
+}
 function detectPlayerPop() {
     bubblesArr.forEach( collider => {
         const collisionDistance = Math.hypot(thePlayer.x - (collider.x + collider.size/2), thePlayer.y - (collider.y + collider.size/2))
-        if ( collisionDistance < playerCollissionRange + bubbleSize ) {
+        if ( collisionDistance < playerCollissionRange + bubbleSize && collider.popped === false) {
+            collider.popped = true
             bubblePop(collider)
+            checkWord(collider.text)
         }
     })
 }
