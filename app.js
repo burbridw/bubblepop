@@ -28,6 +28,11 @@ let bubbleFrame = window.innerWidth/8
 let playerSize = bubbleFrame/2
 let playerCollissionRange = playerSize/2
 
+const gravity = {
+    x: 0,
+    y: 0.1
+}
+
 let bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
 
 canvas1.addEventListener("touchstart",touchCanvas)
@@ -55,6 +60,8 @@ class Bubbles {
         this.speedMod = Math.random()*1.5 - 1
         this.text = words[Math.floor(Math.random()*words.length)]
         this.popped = false
+        this.drop = false
+        this.gravity = 0
     }
     update() {
         if ( this.speedX > 0.5) {
@@ -69,12 +76,13 @@ class Bubbles {
         if ( this.x > window.innerWidth-255) {
             this.speedX -= this.speedX*2
         }
-        if ( this.speedY < 2+this.speedMod ) {
+        if ( this.speedY < 2+this.speedMod && !this.drop) {
             this.speedY += 0.03
         }
-        if ( this.speedY > 2+this.speedMod ) {
+        if ( this.speedY > 2+this.speedMod && !this.drop) {
             this.speedY -= 0.05
         }
+        this.speedY += this.gravity
         this.y -= this.speedY
         this.x += this.speedX
         this.size = bubbleFrame
@@ -86,11 +94,11 @@ class Bubbles {
     ctx.textBaseline = "middle"
     ctx.textAlign = "center"
     ctx.fillText(this.text,this.x+(this.size/2),this.y+(this.size/2))
-    ctx.beginPath()
-    ctx.arc(this.x+this.size/2,this.y+this.size/2,bubbleSize,0,Math.PI*2)
-    ctx.strokeStyle = "red"
-    ctx.stroke()
-    ctx.closePath()
+    // ctx.beginPath()
+    // ctx.arc(this.x+this.size/2,this.y+this.size/2,bubbleSize,0,Math.PI*2)
+    // ctx.strokeStyle = "red"
+    // ctx.stroke()
+    // ctx.closePath()
     // ctx.beginPath()
     // ctx.moveTo(this.x,this.y)
     // ctx.lineTo(this.x+this.size, this.y)
@@ -182,7 +190,8 @@ function drawBubbles() {
     for ( let i = 0; i < bubblesArr.length; i++ ) {
         bubblesArr[i].update()
         bubblesArr[i].draw()
-        if ( bubblesArr[i].y < 0-bubblesArr[i].size) {
+        if ( bubblesArr[i].y < 0-bubblesArr[i].size || bubblesArr[i].y > window.innerHeight*1.5) {
+            console.log("trigger")
             bubblesArr.splice(i,1)
             i--
             bubblesArr.push( new Bubbles)
@@ -203,7 +212,7 @@ function gen() {
 //         }
 //     })
 // })
-
+            
 
 function bubblePop(target) {
     const popTimer = setInterval( ()=>{
@@ -211,16 +220,26 @@ function bubblePop(target) {
             target.sx += increment
         } else {
             clearInterval(popTimer)
-            bubblesArr.splice(bubblesArr.indexOf(target),1)
-            bubblesArr.push(new Bubbles)
+            target.drop = true
+            dropDown(target)
+            // bubblesArr.splice(bubblesArr.indexOf(target),1)
+            // bubblesArr.push(new Bubbles)
         }
     },25)
 }
+function dropDown(target) {
+    target.drop = true
+    target.gravity = -0.2
+}
+let score = 0 
+
 function checkWord(text) {
     if ( correctWords.includes(text) ) {
-        console.log("correct")
+        score++
+        console.log(score)
     } else {
-        console.log("incorrect")
+        score--
+        console.log(score)
     }
 }
 function detectPlayerPop() {
@@ -237,7 +256,7 @@ function detectPlayerPop() {
 function detectCollission() {
     bubblesArr.forEach( collider=>{
         bubblesArr.forEach( other=> {
-            if ( bubblesArr.indexOf(collider)!=bubblesArr.indexOf(other) ) {
+            if ( bubblesArr.indexOf(collider)!=bubblesArr.indexOf(other) && !collider.drop && !other.drop) {
                 const collisionDistance = Math.hypot((collider.x+centerOffSetX) - (other.x+centerOffSetX), (collider.y+centerOffSetY) - (other.y+centerOffSetY))
                 if ( collisionDistance < bubbleSize*2) {
                     if ( collider.x > other.x) {
@@ -260,10 +279,8 @@ function detectCollission() {
     })
 }
 
-
 let playerFrameCol = 0
 let playerFrameRow = 0
-
 
 function playerSwimAnimation() {
     if ( frameCount%6 === 0 ) {
@@ -315,37 +332,7 @@ function animate() {
     requestAnimationFrame(animate)
 }
 
-// function animate() {
-//     ctx.clearRect(0,0,canvas1.width,canvas1.height)
-//     ctx.drawImage(bubble, sourceWidth, startHeight, 300, 300,(window.innerWidth/2)-offSet, bubbleY, 300, 300)
-//     if ( frameCount%4 === 0 && pop) {
-//         sourceWidth += increment
-//         console.log(sourceWidth)
-//     }
-//     bubbleY -= 3
-//     frameCount++
-//     if ( bubbleY < (0-offSet)*2 ) {
-//         bubbleY = window.innerHeight
-//     }
-//     if (sourceWidth < 1200 ) {
-//         requestAnimationFrame(animate)
-//     } else {
-//         pop = false
-//         sourceWidth = 0
-//         ctx.clearRect(0,0,canvas1.width,canvas1.height)
-//         // ctx.drawImage(bubble, sourceWidth, startHeight, 300, 300,(window.innerWidth/2)-offSet, bubbleY, 300, 300)
-//         // requestAnimationFrame(animate)
-//     }
-// }
-// gen()
 animate()
-// frameCount++
-
-// function drawCanvas() {
-//     ctx.drawImage(bubble, 0, 0, 300, 300, 0, 0, 600, 600)
-// }
-
-// , startWidth+increment, startHeight+increment, 0, 0, canvas1.width, canvas1.height
 
 window.addEventListener("touchmove",(event)=>{
     event.preventDefault()
