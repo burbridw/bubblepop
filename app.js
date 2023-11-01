@@ -1,7 +1,75 @@
 const ctx = canvas1.getContext("2d")
 canvas1.width = window.innerWidth
 canvas1.height = window.innerHeight
+
+let gameMode
+
+const preMenu = document.querySelector(".pre-menu")
+const mainMenu = document.querySelector(".main-menu")
+const topicMenu = document.querySelector(".topic-menu")
+const readyScreen = document.querySelector(".ready-screen")
+
+const mainMenuClose = document.querySelector(".main-menu-close")
+const topicMenuClose = document.querySelector(".topic-menu-close")
+const readyScreenClose = document.querySelector(".ready-screen-close")
+const mainMenuButtons = document.querySelectorAll(".main-menu-button")
+
+preMenu.addEventListener("click",openMainMenu)
+mainMenuClose.addEventListener("click",closeMainMenu)
+topicMenuClose.addEventListener("click",closeTopicMenu)
+readyScreenClose.addEventListener("click",closeReadyScreen)
+
+mainMenuButtons.forEach( button=>{
+    button.addEventListener("click",()=>{
+        gameMode = button.dataset.mode
+        switch(gameMode){
+            case "easy": 
+                openTopicMenu()
+                break
+            case "normal":
+                openTopicMenu()
+                break
+            case "challenge":
+                console.log("Challenge game")
+        }
+    })
+})
+
+function openMainMenu() {
+    preMenu.classList.add("behind")
+    mainMenu.classList.remove("behind")
+}
+function closeMainMenu() {
+    preMenu.classList.remove("behind")
+    mainMenu.classList.add("behind")
+}
+function openTopicMenu() {
+    mainMenu.classList.add("behind")
+    topicMenu.classList.remove("behind")
+}
+function closeTopicMenu() {
+    topicMenu.classList.add("behind")
+    mainMenu.classList.remove("behind")
+}
+function openReadyScreen() {
+    topicMenu.classList.add("behind")
+    readyScreen.classList.remove("behind")
+}
+function closeReadyScreen() {
+    switch(gameMode) {
+        case "challege":
+            readyScreen.classList.add("behind")
+            mainMenu.classList.remove("behind")
+            break
+        default: 
+            readyScreen.classList.add("behind")
+            topicMenu.classList.remove("behind")
+    }
+}
+
 const bubblesArr = []
+
+
 
 window.addEventListener("resize",()=>{
     canvas1.width = window.innerWidth
@@ -9,12 +77,14 @@ window.addEventListener("resize",()=>{
     bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
     bubbleFrame = window.innerWidth/8
     playerSize = bubbleFrame/2
-    for ( let i = 0; i < bubblesArr.length; i++ ) {
-        bubblesArr[i].update()
-        bubblesArr[i].draw()
+    if ( gameInProgress ) {
+        for ( let i = 0; i < bubblesArr.length; i++ ) {
+            bubblesArr[i].update()
+            bubblesArr[i].draw()
+        }
+        thePlayer.update()
+        thePlayer.draw()
     }
-    thePlayer.update()
-    thePlayer.draw()
     playerCollissionRange = playerSize/2
 })
 
@@ -172,7 +242,7 @@ class Player {
 
 const thePlayer = new Player
 
-window.addEventListener("mousedown",()=>{
+canvas1.addEventListener("mousedown",()=>{
     mouseObj.click = true
 })
 window.addEventListener("mouseup",()=>{
@@ -332,8 +402,15 @@ function animate() {
     requestAnimationFrame(animate)
 }
 
-animate()
+// animate()
 
 window.addEventListener("touchmove",(event)=>{
     event.preventDefault()
 })
+
+let gameInProgress = false
+
+function renderGame() {
+    gameInProgress = true
+    animate()
+}

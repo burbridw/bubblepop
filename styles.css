@@ -2,9 +2,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    width: 100%;
-    height: 100%;
     font-family: "Architects Daughter", Tahoma, sans-serif;
+}
+
+:root {
+    --standard-shadow: 1px 1px 3px 1px black;
 }
 
 body {
@@ -12,6 +14,79 @@ body {
     height: 100vh;
 }
 
+.canvas-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+#background {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.menu-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background-color: lightblue;
+    box-shadow: var(--standard-shadow);
+    width: 60%;
+    height: 40%;
+    border-radius: 8px;
+}
+.pre-menu {
+    font-size: 2rem;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+.main-menu, .topic-menu {
+    height: 100%;
+    width: 100%;
+}
+.main-menu-header, .main-menu-footer, .topic-menu-header, .topic-menu-footer, .ready-screen-header, .ready-screen-footer {
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.main-menu-body, .topic-menu-body, .ready-screen-body {
+    height: 80%;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.main-menu-button {
+    height: 50%;
+    width: 25%;
+    background-color: lightgreen;
+    box-shadow: var(--standard-shadow);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+.main-menu-close, .topic-menu-close, .ready-screen-close {
+    width: 30%;
+    height: 90%;
+    box-shadow: var(--standard-shadow);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
 #canvas1 {
     position: absolute;
     top: 50%;
@@ -19,7 +94,6 @@ body {
     transform: translate(-50%,-50%);
     width: 100%;
     height: 100%;
-    background-color: darkblue;
 }
 
 #bubble {
@@ -33,4 +107,8 @@ body {
 }
 #playerimageinv {
     display: none;
+}
+.behind {
+    display: none;
+    z-index: -200;;
 }
