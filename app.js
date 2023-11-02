@@ -2,22 +2,28 @@ const ctx = canvas1.getContext("2d")
 canvas1.width = window.innerWidth
 canvas1.height = window.innerHeight
 
+const bubblesArr = []
+
 let gameMode
 
+const menuContainer = document.querySelector(".menu-container")
 const preMenu = document.querySelector(".pre-menu")
 const mainMenu = document.querySelector(".main-menu")
 const topicMenu = document.querySelector(".topic-menu")
+const topicMenuBody = document.querySelector(".topic-menu-body")
 const readyScreen = document.querySelector(".ready-screen")
 
 const mainMenuClose = document.querySelector(".main-menu-close")
 const topicMenuClose = document.querySelector(".topic-menu-close")
 const readyScreenClose = document.querySelector(".ready-screen-close")
 const mainMenuButtons = document.querySelectorAll(".main-menu-button")
+const readyScreenStart = document.querySelector(".ready-screen-start")
 
 preMenu.addEventListener("click",openMainMenu)
 mainMenuClose.addEventListener("click",closeMainMenu)
 topicMenuClose.addEventListener("click",closeTopicMenu)
 readyScreenClose.addEventListener("click",closeReadyScreen)
+readyScreenStart.addEventListener("click",startGame)
 
 mainMenuButtons.forEach( button=>{
     button.addEventListener("click",()=>{
@@ -30,7 +36,7 @@ mainMenuButtons.forEach( button=>{
                 openTopicMenu()
                 break
             case "challenge":
-                console.log("Challenge game")
+                openReadyScreen()
         }
     })
 })
@@ -52,12 +58,19 @@ function closeTopicMenu() {
     mainMenu.classList.remove("behind")
 }
 function openReadyScreen() {
-    topicMenu.classList.add("behind")
-    readyScreen.classList.remove("behind")
+    switch(gameMode) {
+        case "challenge":
+            readyScreen.classList.remove("behind")
+            mainMenu.classList.add("behind")
+            break
+        default: 
+            readyScreen.classList.remove("behind")
+            topicMenu.classList.add("behind")
+    }
 }
 function closeReadyScreen() {
     switch(gameMode) {
-        case "challege":
+        case "challenge":
             readyScreen.classList.add("behind")
             mainMenu.classList.remove("behind")
             break
@@ -66,10 +79,37 @@ function closeReadyScreen() {
             topicMenu.classList.remove("behind")
     }
 }
+function startGame() {
+    readyScreen.classList.add("behind")
+    mainMenu.classList.remove("behind")
+    menuContainer.classList.add("behind")
+    renderGame()
+}
 
-const bubblesArr = []
+function generateTopicList(list) {
+    list.forEach( topic=>{
+        topicMenuBody.innerHTML += `<div class="topic-menu-button" data-topic="${topicTitles[topic]}">${topic}</div>`
+    })
+    document.querySelectorAll(".topic-menu-button").forEach( button=>{
+        setTopicButtonListener(button)
+    })
+}
 
+let gameWordList = []
 
+generateTopicList(topicList)
+
+function setTopicButtonListener(target) {
+    target.addEventListener("click", ()=>{
+        const topic = target.dataset.topic
+        gameWordList = []
+        selectObj[topic].forEach( word=>{
+            gameWordList.push(allObj[word])
+        } )
+        console.log(gameWordList)
+        openReadyScreen()
+    })
+}
 
 window.addEventListener("resize",()=>{
     canvas1.width = window.innerWidth
@@ -88,8 +128,10 @@ window.addEventListener("resize",()=>{
     playerCollissionRange = playerSize/2
 })
 
-const words = ["red","blue","green","bird","dog","cat","rice","bread","salad","car","bus","bike"]
-const correctWords = ["red","blue","green"]
+// const words = ["red","blue","green","bird","dog","cat","rice","bread","salad","car","bus","bike"]
+// const correctWords = ["red","blue","green"]
+
+let correctWords = []
 
 const frameSize = 512
 const centerOffSetX = frameSize/4
@@ -128,7 +170,7 @@ class Bubbles {
         this.speedY = Math.random()*1 + 2
         this.image = bubble
         this.speedMod = Math.random()*1.5 - 1
-        this.text = words[Math.floor(Math.random()*words.length)]
+        this.text = gameWordList[Math.floor(Math.random()*gameWordList.length)]
         this.popped = false
         this.drop = false
         this.gravity = 0
@@ -261,7 +303,6 @@ function drawBubbles() {
         bubblesArr[i].update()
         bubblesArr[i].draw()
         if ( bubblesArr[i].y < 0-bubblesArr[i].size || bubblesArr[i].y > window.innerHeight*1.5) {
-            console.log("trigger")
             bubblesArr.splice(i,1)
             i--
             bubblesArr.push( new Bubbles)
@@ -306,10 +347,10 @@ let score = 0
 function checkWord(text) {
     if ( correctWords.includes(text) ) {
         score++
-        console.log(score)
+        console.log("Correct word", score)
     } else {
         score--
-        console.log(score)
+        console.log("Wrong word", score)
     }
 }
 function detectPlayerPop() {
@@ -376,8 +417,6 @@ function sendBubbles() {
     },1000)
 }
 
-sendBubbles()
-
 let frameCount = 0
 
 let sourceWidth = 0
@@ -412,5 +451,10 @@ let gameInProgress = false
 
 function renderGame() {
     gameInProgress = true
+    const targetWord = gameWordList[Math.floor(Math.random()*gameWordList.length)]
+    correctWords.push(targetWord)
+    console.log("The correct word is ", correctWords[0])
+    drawPlayer()
+    sendBubbles()
     animate()
 }
