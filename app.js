@@ -104,10 +104,13 @@ function closeReadyScreen() {
     }
 }
 
+let game
+
 function startGame() {
     readyScreen.classList.add("behind")
     mainMenu.classList.remove("behind")
     menuContainer.classList.add("behind")
+    game = new Game(canvas1)
     renderGame()
 }
 
@@ -139,7 +142,7 @@ window.addEventListener("resize",()=>{
     canvas1.height = window.innerHeight
     bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
     bubbleFrame = window.innerWidth/8
-    playerSize = bubbleFrame/2
+    playerSize = window.innerWidth/16
     if ( gameInProgress ) {
         for ( let i = 0; i < bubblesArr.length; i++ ) {
             bubblesArr[i].update()
@@ -222,6 +225,7 @@ function detectPlayerPop() {
         const collisionDistance = Math.hypot(game.player.x - (collider.x + collider.size/2), game.player.y - (collider.y + collider.size/2))
         if ( collisionDistance < playerCollissionRange + bubbleSize && collider.popped === false) {
             collider.popped = true
+            console.log("isStar "+collider.isStar,"isHeart "+collider.isHeart)
             bubblePop(collider)
             checkWord(collider.text)
         }
@@ -290,5 +294,3 @@ function renderGame() {
     game.sendBubbles()
     animate()
 }
-
-const game = new Game(canvas1)

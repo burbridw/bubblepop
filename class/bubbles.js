@@ -1,7 +1,5 @@
 class Bubbles {
-    constructor(game,canvas,image,bubbleFrame) {
-        this.game = game
-        this.canvas = canvas
+    constructor(image,isPoison,isStar,isHeart,isRound) {
         this.size = bubbleFrame
         this.x = Math.random()*(window.innerWidth-this.size)
         this.y = window.innerHeight + this.size
@@ -11,9 +9,14 @@ class Bubbles {
         this.image = image
         this.speedMod = Math.random()*1.5 - 1
         this.text = gameWordList[Math.floor(Math.random()*gameWordList.length)]
+        console.log(this.text)
         this.popped = false
         this.drop = false
         this.gravity = 0
+        this.isPoison = isPoison
+        this.isStar = isStar
+        this.isHeart = isHeart
+        this.isRound = isRound
     }
     update() {
         if ( this.speedX > 0.5) {
@@ -58,20 +61,5 @@ class Bubbles {
     // context.lineTo(this.x,this.y+this.size)
     // context.lineTo(this.x,this.y)
     // context.stroke()
-    }
-}
-class RoundBubble extends Bubbles {
-    takeShape(shape) {
-        this.image = shape
-    }
-}
-class Star extends Bubbles {
-    takeShape(shape) {
-        this.image = shape
-    }
-}
-class Heart extends Bubbles {
-    takeShape(shape) {
-        this.image = shape
     }
 }
