@@ -3,8 +3,8 @@ class Player {
         this.game = game
         this.canvas = canvas
         this.size = size
-        this.x = window.innerWidth/2
-        this.y = window.innerHeight/2
+        this.x = canvas.width/2
+        this.y = canvas.height/2
         this.imageleft = imageleft
         this.imageinv = imageinv
         this.image = this.imageleft
@@ -34,7 +34,9 @@ class Player {
         context.save()
         context.translate(this.x,this.y)
         context.rotate(this.angle)
+        if ( poisoned ) context.filter = "hue-rotate(90deg)"
         context.drawImage(this.image, this.sx, this.sy, this.width, this.height, 0-this.size/2, 0-this.size/2, this.size, this.size)
+        context.filter = "none"
         context.restore()
         // context.beginPath()
         // context.arc(this.x, this.y, playerCollissionRange,0,Math.PI*2)

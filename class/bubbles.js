@@ -1,15 +1,16 @@
 class Bubbles {
-    constructor(image,isPoison,isStar,isHeart,isRound) {
+    constructor(image,frameSize,isPoison,isStar,isHeart,isRound) {
         this.size = bubbleFrame
+        this.frameSize = frameSize
         this.x = Math.random()*(window.innerWidth-this.size)
         this.y = window.innerHeight + this.size
-        this.sx = sourceWidth
+        this.sx = 0
+        this.sy = 0
         this.speedX = Math.random()*3 -1.5
         this.speedY = Math.random()*1 + 2
         this.image = image
         this.speedMod = Math.random()*1.5 - 1
         this.text = gameWordList[Math.floor(Math.random()*gameWordList.length)]
-        console.log(this.text)
         this.popped = false
         this.drop = false
         this.gravity = 0
@@ -28,7 +29,7 @@ class Bubbles {
         if ( this.x < 1 ) {
             this.speedX *= -1
         }
-        if ( this.x > window.innerWidth-(frameSize/2)) {
+        if ( this.x > canvas1.width-(this.frameSize/2)) {
             this.speedX -= this.speedX*2
         }
         if ( this.speedY < 2+this.speedMod && !this.drop) {
@@ -43,12 +44,37 @@ class Bubbles {
         this.size = bubbleFrame
     }
     draw(context) {
-    context.drawImage(this.image, this.sx, startHeight, increment, frameSize, this.x, this.y, this.size, this.size)
-    context.fillStyle = "white"
-    context.font = window.innerWidth/100 +"px Architects Daughter"
-    context.textBaseline = "middle"
-    context.textAlign = "center"
-    context.fillText(this.text,this.x+(this.size/2),this.y+(this.size/2))
+    // context.drawImage(this.image, this.sx, this.sy, increment, frameSize, this.x, this.y, this.size, this.size)
+    context.drawImage(this.image, this.sx, this.sy, this.frameSize, this.frameSize, this.x, this.y, this.size, this.size)
+    if ( this.isRound ) {
+        const fontSize = canvas1.width/50
+        const textX = this.x+(this.size/2)
+        let textY = this.y+(this.size/2)
+        const wordsFromText = this.text.split(" ")
+        context.fillStyle = "white"
+        context.font = fontSize +"px Architects Daughter"
+        context.textBaseline = "middle"
+        context.textAlign = "center"
+        const measureText = context.measureText(this.text)
+        const measurement = measureText.width
+        if ( wordsFromText.length === 1 || measurement < bubbleFrame*0.95 ) {
+            context.fillText(this.text,textX,textY)
+        } else {
+            if ( wordsFromText.length > 2 ) textY -= fontSize/2
+            let line = ""
+            for ( let i = 0; i < wordsFromText.length; i++ ) {
+                let testLine = line+wordsFromText[i]+" "
+                if ( measurement > bubbleFrame*0.75 && i > 0) {
+                    context.fillText(line,textX,textY)
+                    line = wordsFromText[i]+" "
+                    textY += fontSize
+                } else {
+                    line = testLine
+                }
+            }
+            context.fillText(line,textX,textY)
+        }
+    }
     // context.beginPath()
     // context.arc(this.x+this.size/2,this.y+this.size/2,bubbleSize,0,Math.PI*2)
     // context.strokeStyle = "red"

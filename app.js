@@ -15,20 +15,22 @@ const gravity = {
 let gameMode
 let gameInProgress = false
 let frameCount = 0
-let sourceWidth = 0
-let startHeight = 0
-let increment = 4096/8
-let pop = false
-const offSet = increment/2
-let bubbleY = window.innerHeight
+// let increment = 4096/8
+let increment = 3675/5
+// const offSet = increment/2
+// let bubbleY = window.innerHeight
 let gameWordList = []
 let correctWords = []
-let bubbleFrame = window.innerWidth/8
+let bubbleFrame = canvas1.width/8
 let playerSize = bubbleFrame/2
 let playerCollissionRange = playerSize/2
-let score = 0 
+let score = 0
+let health = 5
+let poisoned = false
+let mini = false
 
-let bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
+// let bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
+let bubbleSize = ((bubbleFrame/3)+10)
 
 const menuContainer = document.querySelector(".menu-container")
 const preMenu = document.querySelector(".pre-menu")
@@ -138,20 +140,24 @@ function setTopicButtonListener(target) {
 }
 
 window.addEventListener("resize",()=>{
-    canvas1.width = window.innerWidth
-    canvas1.height = window.innerHeight
-    bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
-    bubbleFrame = window.innerWidth/8
-    playerSize = window.innerWidth/16
-    if ( gameInProgress ) {
-        for ( let i = 0; i < bubblesArr.length; i++ ) {
-            bubblesArr[i].update()
-            bubblesArr[i].draw(ctx)
+    setTimeout( ()=>{
+        canvas1.width = window.innerWidth
+        canvas1.height = window.innerHeight
+        bubbleFrame = canvas1.width/8
+        playerSize = bubbleFrame / 2
+        if ( poisoned ) playerSize = bubbleFrame * 2
+        if ( mini ) playerSize = bubbleFrame / 4
+        playerCollissionRange = playerSize/2
+        bubbleSize = (bubbleFrame/3)+10
+        if ( gameInProgress ) {
+            for ( let i = 0; i < bubblesArr.length; i++ ) {
+                bubblesArr[i].update()
+                bubblesArr[i].draw(ctx)
+            }
+            game.player.update()
+            game.player.draw(ctx)
         }
-        game.player.update()
-        game.player.draw(ctx)
-    }
-    playerCollissionRange = playerSize/2
+    },1)
 })
 
 canvas1.addEventListener("touchstart",touchCanvas)
@@ -168,8 +174,8 @@ canvas1.addEventListener("touchend",()=>{
 })
 
 const mouseObj = {
-    x: window.innerWidth/2-1,
-    y: window.innerHeight/2,
+    x: canvas1.width/2-1,
+    y: canvas1.height/2,
     click: false
 }
 window.addEventListener("mousemove",(e)=>{
@@ -196,8 +202,10 @@ window.addEventListener("touchmove",(event)=>{
 // })
             
 function bubblePop(target) {
+    target.image = popimage
+    target.frameSize = 735
     const popTimer = setInterval( ()=>{
-        if ( target.sx < increment*8 ) {
+        if ( target.sx < increment*5 ) {
             target.sx += increment
         } else {
             clearInterval(popTimer)
@@ -216,8 +224,8 @@ function checkWord(text) {
         score++
         console.log("Correct word", score)
     } else {
-        score--
-        console.log("Wrong word", score)
+        health--
+        console.log("Wrong word", health)
     }
 }
 function detectPlayerPop() {
@@ -225,11 +233,42 @@ function detectPlayerPop() {
         const collisionDistance = Math.hypot(game.player.x - (collider.x + collider.size/2), game.player.y - (collider.y + collider.size/2))
         if ( collisionDistance < playerCollissionRange + bubbleSize && collider.popped === false) {
             collider.popped = true
-            console.log("isStar "+collider.isStar,"isHeart "+collider.isHeart)
+            if ( collider.isPoison ) {
+                console.log("Poison bubble")
+                mini ? restoreSize() : becomePoisoned()
+            }
+            if ( collider.isStar ) {
+                console.log("Star bubble")
+                poisoned ? restoreSize() : makeMini()
+            }
+            if ( collider.isHeart ) {
+                console.log("Heart bubble")
+                 restoreSize()
+                health < 5 ? health++ : health = 5
+            }
+            if ( collider.isRound ) {
+                console.log("Round bubble")
+                checkWord(collider.text)
+            }
             bubblePop(collider)
-            checkWord(collider.text)
         }
     })
+}
+function becomePoisoned() {
+    poisoned = true
+    playerSize = bubbleFrame * 2
+    playerCollissionRange = playerSize/2
+}
+function restoreSize() {
+    poisoned = false
+    mini = false
+    playerSize = bubbleFrame/2
+    playerCollissionRange = playerSize/2
+}
+function makeMini() {
+    mini = true
+    playerSize = bubbleFrame/4
+    playerCollissionRange = playerSize/2
 }
 
 function detectCollission() {

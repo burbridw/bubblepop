@@ -15,8 +15,7 @@ class Game {
     }
     sendBubbles() {
         const bubbleFlow = setInterval( ()=>{
-            console.log("trigger sendBubbles")
-            let newAdd = new Bubbles(bubble,false,false,false,true)
+            let newAdd = new Bubbles(bubble,frameSize,false,false,false,true)
             bubblesArr.push( newAdd )
             if (bubblesArr.length > 8) {
                 clearInterval(bubbleFlow)
@@ -24,13 +23,11 @@ class Game {
         },1000)
     }
     drawBubbles() {
-        console.log("trigger drawBubbles")
-            // bubblesArr[0].update()
-            // bubblesArr[0].draw(ctx)
         for ( let i = 0; i < bubblesArr.length; i++ ) {
-            bubblesArr[i].update()
-            bubblesArr[i].draw(ctx)
-            if ( bubblesArr[i].y < 0-bubblesArr[i].size || bubblesArr[i].y > window.innerHeight*1.5) {
+            const thisBubble = bubblesArr[i]
+            thisBubble.update()
+            thisBubble.draw(ctx)
+            if ( thisBubble.y < 0-thisBubble.size || thisBubble.y > canvas1.height*1.5) {
                 bubblesArr.splice(i,1)
                 i--
                 bubblesArr.push( this.chooseNewBubble() )
@@ -42,16 +39,16 @@ class Game {
         const randomNumber = Math.random()
         if ( randomNumber > 0.99 ) {
             console.log(randomNumber,"poison")
-            return new Bubbles(poisonbubble,true,false,false,false)
+            return new Bubbles(poisonbubble,frameSize,true,false,false,false)
         } else if ( randomNumber > 0.965 ) {
             console.log(randomNumber,"star")
-            return new Bubbles(starbubble,false,true,false,false)
+            return new Bubbles(starbubble,frameSize,false,true,false,false)
         } else if ( randomNumber > 0.94) {
             console.log(randomNumber,"heart")
-            return new Bubbles(heartbubble,false,false,true,false)
+            return new Bubbles(heartbubble,frameSize,false,false,true,false)
         } else {
             console.log(randomNumber,"round")
-            return new Bubbles(bubble,false,false,false,true)
+            return new Bubbles(bubble,frameSize,false,false,false,true)
         }
     }
 }
