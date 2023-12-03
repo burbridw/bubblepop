@@ -57,14 +57,25 @@ class Bubbles {
         context.textAlign = "center"
         const measureText = context.measureText(this.text)
         const measurement = measureText.width
-        if ( wordsFromText.length === 1 || measurement < bubbleFrame*0.95 ) {
-            context.fillText(this.text,textX,textY)
+        if ( wordsFromText.length === 1 ) {
+            if ( measurement < bubbleFrame*0.8 ) {
+                context.fillText(this.text,textX,textY)
+            } else {
+                context.font = canvas1.width/75+"px Architects Daughter"
+                context.fillText(this.text,textX,textY)
+            }
         } else {
-            if ( wordsFromText.length > 2 ) textY -= fontSize/2
+            if ( wordsFromText.length > 2 ) {
+                textY -= fontSize/2
+                context.font = canvas1.width/75+"px Architects Daughter"
+            } else {
+                textY -= fontSize/4
+            }
             let line = ""
             for ( let i = 0; i < wordsFromText.length; i++ ) {
                 let testLine = line+wordsFromText[i]+" "
-                if ( measurement > bubbleFrame*0.75 && i > 0) {
+                const measureTestLine = context.measureText(testLine)
+                if ( measureTestLine.width > bubbleFrame*0.8 && i > 0) {
                     context.fillText(line,textX,textY)
                     line = wordsFromText[i]+" "
                     textY += fontSize

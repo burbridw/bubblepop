@@ -12,6 +12,7 @@ class Game {
         this.drawBubbles()
         this.player.update()
         this.player.draw(context)
+        console.log(bubbleFrame,bubbleSize)
     }
     sendBubbles() {
         const bubbleFlow = setInterval( ()=>{
@@ -30,24 +31,19 @@ class Game {
             if ( thisBubble.y < 0-thisBubble.size || thisBubble.y > canvas1.height*1.5) {
                 bubblesArr.splice(i,1)
                 i--
-                bubblesArr.push( this.chooseNewBubble() )
-                // bubblesArr.push( new Bubbles(bubble,false,false) )
+                if ( score < 3 ) bubblesArr.push( this.chooseNewBubble() )
             }
         }
     }
     chooseNewBubble() {
         const randomNumber = Math.random()
         if ( randomNumber > 0.99 ) {
-            console.log(randomNumber,"poison")
             return new Bubbles(poisonbubble,frameSize,true,false,false,false)
         } else if ( randomNumber > 0.965 ) {
-            console.log(randomNumber,"star")
             return new Bubbles(starbubble,frameSize,false,true,false,false)
         } else if ( randomNumber > 0.94) {
-            console.log(randomNumber,"heart")
             return new Bubbles(heartbubble,frameSize,false,false,true,false)
         } else {
-            console.log(randomNumber,"round")
             return new Bubbles(bubble,frameSize,false,false,false,true)
         }
     }

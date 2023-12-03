@@ -30,7 +30,7 @@ let poisoned = false
 let mini = false
 
 // let bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
-let bubbleSize = ((bubbleFrame/3)+10)
+let bubbleSize = bubbleFrame*0.42
 
 const menuContainer = document.querySelector(".menu-container")
 const preMenu = document.querySelector(".pre-menu")
@@ -148,7 +148,7 @@ window.addEventListener("resize",()=>{
         if ( poisoned ) playerSize = bubbleFrame * 2
         if ( mini ) playerSize = bubbleFrame / 4
         playerCollissionRange = playerSize/2
-        bubbleSize = (bubbleFrame/3)+10
+        bubbleSize = bubbleFrame*0.4
         if ( gameInProgress ) {
             for ( let i = 0; i < bubblesArr.length; i++ ) {
                 bubblesArr[i].update()
@@ -187,9 +187,6 @@ canvas1.addEventListener("mousedown",()=>{
 })
 window.addEventListener("mouseup",()=>{
     mouseObj.click = false
-})
-window.addEventListener("touchmove",(event)=>{
-    event.preventDefault()
 })
 
 // canvas1.addEventListener("click",(event)=>{
