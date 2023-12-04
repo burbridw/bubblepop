@@ -10,7 +10,7 @@ class Bubbles {
         this.speedY = Math.random()*1 + 2
         this.image = image
         this.speedMod = Math.random()*1.5 - 1
-        this.text = gameWordList[Math.floor(Math.random()*gameWordList.length)]
+        this.text = modifiedList[Math.floor(Math.random()*modifiedList.length)]
         this.popped = false
         this.drop = false
         this.gravity = 0

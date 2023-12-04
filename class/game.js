@@ -7,7 +7,7 @@ class Game {
         this.healthStates = [new bar0(this,this.canvas), new bar1(this,this.canvas), new bar2(this,this.canvas), new bar3(this,this.canvas), new bar4(this,this.canvas), new bar5(this,this.canvas)]
         this.healthbar = this.healthStates[5]
         this.healthbar.changeHp()
-        this.scoreStates = [new tarbar0(this,this.canvas), new tarbar1(this,this.canvas), new tarbar2(this,this.canvas), new tarbar3(this,this.canvas), new tarbar4(this,this.canvas), new tarbar5(this,this.canvas)]
+        this.scoreStates = [new scorebar0(this,this.canvas), new scorebar1(this,this.canvas), new scorebar2(this,this.canvas), new scorebar3(this,this.canvas), new scorebar4(this,this.canvas), new scorebar5(this,this.canvas)]
         this.scorebar = this.scoreStates[0]
         this.scorebar.setScore()
     }
@@ -18,22 +18,22 @@ class Game {
         this.drawBubbles()
         this.player.update()
         this.player.draw(context)
-        this.healthbar.draw(ctx2)
-        this.scorebar.draw(ctx2)
     }
     setHealthState(state) {
         this.healthbar = this.healthStates[state]
         this.healthbar.changeHp()
+        this.healthbar.displayHealth()
     }
     setScoreState(state) {
         this.scorebar = this.scoreStates[state]
         this.scorebar.setScore()
+        this.scorebar.displayScore()
     }
     sendBubbles() {
         const bubbleFlow = setInterval( ()=>{
             let newAdd = new Bubbles(bubble,frameSize,false,false,false,true)
             bubblesArr.push( newAdd )
-            if (bubblesArr.length > 8) {
+            if (bubblesArr.length > bubbleCap) {
                 clearInterval(bubbleFlow)
             }
         },1000)
@@ -52,11 +52,11 @@ class Game {
     }
     chooseNewBubble() {
         const randomNumber = Math.random()
-        if ( randomNumber > 0.99 ) {
+        if ( randomNumber > 0.985 ) {
             return new Bubbles(poisonbubble,frameSize,true,false,false,false)
-        } else if ( randomNumber > 0.965 ) {
+        } else if ( randomNumber > 0.96 ) {
             return new Bubbles(starbubble,frameSize,false,true,false,false)
-        } else if ( randomNumber > 0.94) {
+        } else if ( randomNumber > 0.93) {
             return new Bubbles(heartbubble,frameSize,false,false,true,false)
         } else {
             return new Bubbles(bubble,frameSize,false,false,false,true)

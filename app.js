@@ -18,14 +18,16 @@ const gravity = {
 }
 
 let gameMode
+let round = 1
+let bubbleCap = 8
 let gameInProgress = false
 let pauseAnimation = false
+let keepCount = true
 let frameCount = 0
-// let increment = 4096/8
 let increment = 3675/5
-// const offSet = increment/2
-// let bubbleY = window.innerHeight
 let gameWordList = []
+let modifiedList = []
+let unselectedWordList = []
 let correctWords = []
 let bubbleFrame = canvas1.width/8
 let playerSize = bubbleFrame/2
@@ -35,7 +37,6 @@ let health = 5
 let poisoned = false
 let mini = false
 
-// let bubbleSize = ((window.innerWidth/8)/3)+((window.innerWidth/8)/32)
 let bubbleSize = bubbleFrame*0.42
 
 const menuContainer = document.querySelector(".menu-container")
@@ -44,6 +45,10 @@ const mainMenu = document.querySelector(".main-menu")
 const topicMenu = document.querySelector(".topic-menu")
 const topicMenuBody = document.querySelector(".topic-menu-body")
 const readyScreen = document.querySelector(".ready-screen")
+const inGameHud = document.querySelector(".in-game-hud")
+const hBarDisplay = document.querySelector("#hbardisplay")
+const scoreBarDisplay = document.querySelector("#scorebardisplay")
+const scoreBarText = document.querySelector(".scorebar-text")
 
 const mainMenuClose = document.querySelector(".main-menu-close")
 const topicMenuClose = document.querySelector(".topic-menu-close")
@@ -51,9 +56,14 @@ const readyScreenClose = document.querySelector(".ready-screen-close")
 const mainMenuButtons = document.querySelectorAll(".main-menu-button")
 const readyScreenStart = document.querySelector(".ready-screen-start")
 const gameOverDisplay = document.querySelector(".game-over-display")
+const gameOverMenu = document.querySelector(".game-over-menu")
 const gameOverRestart = document.querySelector(".game-over-restart")
+const gameOverContinue = document.querySelector(".game-over-continue")
+const gameOverText = document.querySelector(".game-over-text")
 
 gameOverRestart.addEventListener("click",restartFromGameOver)
+gameOverContinue.addEventListener("click",continueFromGameOver)
+gameOverMenu.addEventListener("click",menuFromGameOver)
 
 
 preMenu.addEventListener("click",openMainMenu)
@@ -77,6 +87,13 @@ mainMenuButtons.forEach( button=>{
         }
     })
 })
+
+function closePreMenu() {
+    preMenu.classList.add("behind")
+}
+function openPreMenu() {
+    preMenu.classList.remove("behind")
+}
 
 function openMainMenu() {
     preMenu.classList.add("behind")
@@ -121,11 +138,16 @@ let game
 
 function startGame() {
     pauseAnimation = false
-    readyScreen.classList.add("behind")
-    mainMenu.classList.remove("behind")
+    // readyScreen.classList.add("behind")
+    // mainMenu.classList.remove("behind")
     menuContainer.classList.add("behind")
+    closeReadyScreen()
+    closeTopicMenu()
+    closeMainMenu()
+    closePreMenu()
     game = new Game(canvas1)
     renderGame()
+    console.log(bubbleCap)
 }
 
 function generateTopicList(list) {
@@ -146,6 +168,17 @@ function setTopicButtonListener(target) {
         selectObj[topic].forEach( word=>{
             gameWordList.push(allObj[word])
         } )
+        if ( gameMode != "easy" ) {
+            unselectedWordList = []
+            for ( const key in selectObj ) {
+                if ( key != topic ) {
+                    selectObj[key].forEach( word =>{
+                        unselectedWordList.push(allObj[word])
+                    })
+                }
+            }
+            console.log(unselectedWordList)
+        } 
         console.log(gameWordList)
         openReadyScreen()
     })
@@ -235,6 +268,7 @@ function checkWord(text) {
         game.setScoreState(score)
         game.scorebar.text = correctWords[0]
         if ( score === 5 ) {
+            gameInProgress = false
             setTimeout( ()=>{
                 scoreGameOver()
             },3000)
@@ -242,8 +276,10 @@ function checkWord(text) {
         console.log("Correct word", score)
     } else {
         health--
-        if ( health >= 0 ) game.setHealthState(health)
-        if ( health <= 0 ) {
+        if ( health < 0 ) health = 0
+        game.setHealthState(health)
+        if ( health === 0 ) {
+            gameInProgress = false
             health = 0
             setTimeout( ()=>{
                 healthGameOver()
@@ -262,12 +298,12 @@ function detectPlayerPop() {
             if ( collider.isStar ) {
                 poisoned ? restoreSize() : makeMini()
             }
-            if ( collider.isHeart ) {
+            if ( collider.isHeart && gameInProgress ) {
                  restoreSize()
                 health < 5 ? health++ : health = 5
                 game.setHealthState(health)
             }
-            if ( collider.isRound ) {
+            if ( collider.isRound && gameInProgress) {
                 checkWord(collider.text)
             }
             bubblePop(collider)
@@ -348,33 +384,94 @@ function animate() {
 
 function renderGame() {
     gameInProgress = true
-    const targetWord = gameWordList[Math.floor(Math.random()*gameWordList.length)]
+    if ( gameMode === "challenge" ) {
+        const topic = topicList.sort( ()=> { return 0.5 - Math.random() } )[0]
+        console.log(topic)
+        gameWordList = []
+        selectObj[topicTitles[topic]].forEach( word=>{
+            gameWordList.push(allObj[word])
+        } )
+    }
+        if ( gameMode != "easy" ) {
+            unselectedWordList = []
+            for ( const key in selectObj ) {
+                if ( key != topic ) {
+                    selectObj[key].forEach( word =>{
+                        unselectedWordList.push(allObj[word])
+                    })
+                }
+            }
+            console.log(unselectedWordList)
+        } 
+    modifiedList = gameWordList.sort( () => {return 0.5 - Math.random()} ).slice(0,10)
+    console.log(modifiedList)
+    const targetWord = modifiedList[0]
+    if ( gameMode === "normal" ) {
+        const randoms = unselectedWordList.sort( ()=>{ return 0.5 - Math.random()} ).slice(0,9)
+        modifiedList = [targetWord,...randoms]
+    }
     correctWords.push(targetWord)
-    console.log("The correct word is ", correctWords[0])
-    game.scorebar.text = targetWord
+    scoreBarText.textContent = targetWord
+    inGameHud.classList.add("show-in-game-hud")
     game.sendBubbles()
     animate()
 }
 
 function healthGameOver() {
     pauseAnimation = true
-    gameInProgress = false
+    gameOverContinue.classList.add("behind")
+    gameOverText.textContent = `Your game is over on round ${round}`
     gameOverDisplay.classList.add("show-game-over")
+    inGameHud.classList.remove("show-in-game-hud")
 }
 function scoreGameOver() {
     pauseAnimation = true
-    gameInProgress = false
+    gameOverContinue.classList.remove("behind")
+    gameOverText.textContent = `You have cleared round ${round} \n Continue to round ${round+1}?`
     gameOverDisplay.classList.add("show-game-over")
+    inGameHud.classList.remove("show-in-game-hud")
 }
 
 function restartFromGameOver() {
     gameOverDisplay.classList.remove("show-game-over")
     bubblesArr = []
+    bubbleCap = 8
     correctWords = []
+    round = 1
     health = 5
+    game.setHealthState(health)
     score = 0
+    game.setScoreState(score)
     frameCount = 0
     poisoned = false
     mini = false
     startGame()
+}
+
+function continueFromGameOver() {
+    gameOverDisplay.classList.remove("show-game-over")
+    bubblesArr = []
+    correctWords = []
+    score = 0
+    game.setScoreState(score)
+    frameCount = 0
+    bubbleCap += 2
+    round += 1
+    startGame()
+}
+
+function menuFromGameOver() {
+    gameOverDisplay.classList.remove("show-game-over")
+    ctx.clearRect(0,0,canvas1.width,canvas1.height)
+    bubblesArr = []
+    bubbleCap = 8
+    correctWords = []
+    score = 0
+    health = 5
+    poisoned = false
+    mini = false
+    round = 1
+    frameCount = 0
+    menuContainer.classList.remove("behind")
+    openPreMenu()
 }

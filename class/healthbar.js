@@ -1,20 +1,24 @@
 class HealthBar {
     constructor(game,canvas) {
         this.game = game
-        this.width = canvas.width/5
-        this.height = this.width/4
-        this.x = (canvas.width - this.width) - 50
-        this.y = this.height
-        this.image = hbar5
+        // this.width = canvas.width/5
+        // this.height = this.width/4
+        // this.x = (canvas.width - this.width) - 50
+        // this.y = this.height
+        this.image = hbar5.getAttribute("src")
     }
-    draw(context) {
-        context.drawImage(this.image,this.x,this.y,this.width,this.height)
+    // draw(context) {
+    //     context.drawImage(this.image,this.x,this.y,this.width,this.height)
+    // }
+    displayHealth() {
+        hBarDisplay.setAttribute("src",this.image)
     }
 }
 
+
 class bar5 extends HealthBar {
     changeHp() {
-        this.image = hbar5
+        this.image = hbar5.getAttribute("src")
     }
     hUp() {
         this.game.setHealthState(5)
@@ -25,7 +29,7 @@ class bar5 extends HealthBar {
 }
 class bar4 extends HealthBar {
     changeHp() {
-        this.image = hbar4
+        this.image = hbar4.getAttribute("src")
     }
     hUp() {
         this.game.setHealthState(5)
@@ -36,7 +40,7 @@ class bar4 extends HealthBar {
 }
 class bar3 extends HealthBar {
     changeHp() {
-        this.image = hbar3
+        this.image = hbar3.getAttribute("src")
     }
     hUp() {
         this.game.setHealthState(4)
@@ -47,7 +51,7 @@ class bar3 extends HealthBar {
 }
 class bar2 extends HealthBar {
     changeHp() {
-        this.image = hbar2
+        this.image = hbar2.getAttribute("src")
     }
     hUp() {
         this.game.setHealthState(3)
@@ -58,7 +62,7 @@ class bar2 extends HealthBar {
 }
 class bar1 extends HealthBar {
     changeHp() {
-        this.image = hbar1
+        this.image = hbar1.getAttribute("src")
     }
     hUp() {
         this.game.setHealthState(2)
@@ -69,7 +73,7 @@ class bar1 extends HealthBar {
 }
 class bar0 extends HealthBar {
     changeHp() {
-        this.image = hbar0
+        this.image = hbar0.getAttribute("src")
     }
     hUp() {
         this.game.setHealthState(1)
