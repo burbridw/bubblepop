@@ -3,7 +3,12 @@ const ctx = canvas1.getContext("2d")
 canvas1.width = window.innerWidth
 canvas1.height = window.innerHeight
 
-const bubblesArr = []
+const canvas2 = document.getElementById("canvas2")
+const ctx2 = canvas2.getContext("2d")
+canvas2.width = window.innerWidth
+canvas2.height = window.innerHeight
+
+let bubblesArr = []
 const frameSize = 512
 const centerOffSetX = frameSize/4
 const centerOffSetY = frameSize/4
@@ -14,6 +19,7 @@ const gravity = {
 
 let gameMode
 let gameInProgress = false
+let pauseAnimation = false
 let frameCount = 0
 // let increment = 4096/8
 let increment = 3675/5
@@ -44,6 +50,11 @@ const topicMenuClose = document.querySelector(".topic-menu-close")
 const readyScreenClose = document.querySelector(".ready-screen-close")
 const mainMenuButtons = document.querySelectorAll(".main-menu-button")
 const readyScreenStart = document.querySelector(".ready-screen-start")
+const gameOverDisplay = document.querySelector(".game-over-display")
+const gameOverRestart = document.querySelector(".game-over-restart")
+
+gameOverRestart.addEventListener("click",restartFromGameOver)
+
 
 preMenu.addEventListener("click",openMainMenu)
 mainMenuClose.addEventListener("click",closeMainMenu)
@@ -109,6 +120,7 @@ function closeReadyScreen() {
 let game
 
 function startGame() {
+    pauseAnimation = false
     readyScreen.classList.add("behind")
     mainMenu.classList.remove("behind")
     menuContainer.classList.add("behind")
@@ -219,10 +231,24 @@ function dropDown(target) {
 function checkWord(text) {
     if ( correctWords.includes(text) ) {
         score++
+        if ( score > 5 ) score = 5
+        game.setScoreState(score)
+        game.scorebar.text = correctWords[0]
+        if ( score === 5 ) {
+            setTimeout( ()=>{
+                scoreGameOver()
+            },3000)
+        }
         console.log("Correct word", score)
     } else {
         health--
-        console.log("Wrong word", health)
+        if ( health >= 0 ) game.setHealthState(health)
+        if ( health <= 0 ) {
+            health = 0
+            setTimeout( ()=>{
+                healthGameOver()
+            },1500)
+        }
     }
 }
 function detectPlayerPop() {
@@ -231,20 +257,17 @@ function detectPlayerPop() {
         if ( collisionDistance < playerCollissionRange + bubbleSize && collider.popped === false) {
             collider.popped = true
             if ( collider.isPoison ) {
-                console.log("Poison bubble")
                 mini ? restoreSize() : becomePoisoned()
             }
             if ( collider.isStar ) {
-                console.log("Star bubble")
                 poisoned ? restoreSize() : makeMini()
             }
             if ( collider.isHeart ) {
-                console.log("Heart bubble")
                  restoreSize()
                 health < 5 ? health++ : health = 5
+                game.setHealthState(health)
             }
             if ( collider.isRound ) {
-                console.log("Round bubble")
                 checkWord(collider.text)
             }
             bubblePop(collider)
@@ -315,11 +338,12 @@ function playerSwimAnimation() {
 function animate() {
     frameCount++
     ctx.clearRect( 0, 0, canvas1.width, canvas1.height)
+    ctx2.clearRect( 0, 0, canvas1.width, canvas1.height)
     game.render(ctx)
     if ( frameCount === 61) {
         frameCount = 0
     }
-    requestAnimationFrame(animate)
+    if ( !pauseAnimation ) requestAnimationFrame(animate)
 }
 
 function renderGame() {
@@ -327,6 +351,30 @@ function renderGame() {
     const targetWord = gameWordList[Math.floor(Math.random()*gameWordList.length)]
     correctWords.push(targetWord)
     console.log("The correct word is ", correctWords[0])
+    game.scorebar.text = targetWord
     game.sendBubbles()
     animate()
+}
+
+function healthGameOver() {
+    pauseAnimation = true
+    gameInProgress = false
+    gameOverDisplay.classList.add("show-game-over")
+}
+function scoreGameOver() {
+    pauseAnimation = true
+    gameInProgress = false
+    gameOverDisplay.classList.add("show-game-over")
+}
+
+function restartFromGameOver() {
+    gameOverDisplay.classList.remove("show-game-over")
+    bubblesArr = []
+    correctWords = []
+    health = 5
+    score = 0
+    frameCount = 0
+    poisoned = false
+    mini = false
+    startGame()
 }

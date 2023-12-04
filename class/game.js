@@ -4,6 +4,12 @@ class Game {
         this.width = canvas.width
         this.height = canvas.height
         this.player = new Player(this,this.canvas,playerSize,playerimageleft,playerimageinv)
+        this.healthStates = [new bar0(this,this.canvas), new bar1(this,this.canvas), new bar2(this,this.canvas), new bar3(this,this.canvas), new bar4(this,this.canvas), new bar5(this,this.canvas)]
+        this.healthbar = this.healthStates[5]
+        this.healthbar.changeHp()
+        this.scoreStates = [new tarbar0(this,this.canvas), new tarbar1(this,this.canvas), new tarbar2(this,this.canvas), new tarbar3(this,this.canvas), new tarbar4(this,this.canvas), new tarbar5(this,this.canvas)]
+        this.scorebar = this.scoreStates[0]
+        this.scorebar.setScore()
     }
     render(context) {
         detectCollission()
@@ -12,7 +18,16 @@ class Game {
         this.drawBubbles()
         this.player.update()
         this.player.draw(context)
-        console.log(bubbleFrame,bubbleSize)
+        this.healthbar.draw(ctx2)
+        this.scorebar.draw(ctx2)
+    }
+    setHealthState(state) {
+        this.healthbar = this.healthStates[state]
+        this.healthbar.changeHp()
+    }
+    setScoreState(state) {
+        this.scorebar = this.scoreStates[state]
+        this.scorebar.setScore()
     }
     sendBubbles() {
         const bubbleFlow = setInterval( ()=>{
@@ -31,7 +46,7 @@ class Game {
             if ( thisBubble.y < 0-thisBubble.size || thisBubble.y > canvas1.height*1.5) {
                 bubblesArr.splice(i,1)
                 i--
-                if ( score < 3 ) bubblesArr.push( this.chooseNewBubble() )
+                if ( score < 5 ) bubblesArr.push( this.chooseNewBubble() )
             }
         }
     }

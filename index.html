@@ -12,6 +12,7 @@
 <body>
     <div class="canvas-container">
         <img src="./images/background.png" id="background">
+        <canvas id="canvas2"></canvas>
         <canvas id="canvas1"></canvas>
         <div class="menu-container">
             <div class="pre-menu"> START GAME</div>
@@ -47,6 +48,15 @@
                 </div>
             </div>
         </div>
+        <div class="game-over-display">
+            <img src="./images/gameover.png" class="game-over-display-background">
+            <div class="game-over-button game-over-restart">
+                <img src="./images/restart.png">
+            </div>
+            <div class="game-over-button game-over-menu">
+                <img src="./images/menu.png">
+            </div>
+        </div>
         <svg>
             <filter id="turbulence" x="0" y="0" width="100%" height="100%">
               <feTurbulence id="sea-filter" numOctaves="3" seed="2" baseFrequency="0.02 0.05"></feTurbulence>
@@ -63,8 +73,22 @@
     <img src="./images/playerfishred.png" class="startup-images" id="playerimageleft">
     <img src="./images/playerfishredright.png" class="startup-images" id="playerimageright">
     <img src="./images/playerfishredinv.png" class="startup-images" id="playerimageinv">
+    <img src="./images/hp bar/hbar-5.png" class="startup-images" id="hbar5">
+    <img src="./images/hp bar/hbar-4.png" class="startup-images" id="hbar4">
+    <img src="./images/hp bar/hbar-3.png" class="startup-images" id="hbar3">
+    <img src="./images/hp bar/hbar-2.png" class="startup-images" id="hbar2">
+    <img src="./images/hp bar/hbar-1.png" class="startup-images" id="hbar1">
+    <img src="./images/hp bar/hbar-0.png" class="startup-images" id="hbar0">
+    <img src="./images/target bar/target5.png" class="startup-images" id="target5">
+    <img src="./images/target bar/target4.png" class="startup-images" id="target4">
+    <img src="./images/target bar/target3.png" class="startup-images" id="target3">
+    <img src="./images/target bar/target2.png" class="startup-images" id="target2">
+    <img src="./images/target bar/target1.png" class="startup-images" id="target1">
+    <img src="./images/target bar/target0.png" class="startup-images" id="target0">
     <script src="./class/player.js"></script>
     <script src="./class/bubbles.js"></script>
+    <script src="class/targetbar.js"></script>
+    <script src="class/healthbar.js"></script>
     <script src="./class/game.js"></script>
     <script src="lists.js"></script>
     <script src="app.js"></script>
