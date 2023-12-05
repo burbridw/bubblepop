@@ -3,14 +3,14 @@ class Bubbles {
         this.size = bubbleFrame
         this.frameSize = frameSize
         this.x = Math.random()*(window.innerWidth-this.size)
-        this.y = window.innerHeight + this.size
+        this.y = window.innerHeight + (this.size+(Math.random()*1 + 2))
         this.sx = 0
         this.sy = 0
         this.speedX = Math.random()*3 -1.5
         this.speedY = Math.random()*1 + 2
         this.image = image
         this.speedMod = Math.random()*1.5 - 1
-        this.text = modifiedList[Math.floor(Math.random()*modifiedList.length)]
+        this.text = gameWordList[Math.floor(Math.random()*gameWordList.length)]
         this.popped = false
         this.drop = false
         this.gravity = 0

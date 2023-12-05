@@ -25,9 +25,11 @@ let pauseAnimation = false
 let keepCount = true
 let frameCount = 0
 let increment = 3675/5
-let gameWordList = []
-let modifiedList = []
+let selectedWordList = []
 let unselectedWordList = []
+let challengeTopic
+let modifiedList = []
+let gameWordList = []
 let correctWords = []
 let bubbleFrame = canvas1.width/8
 let playerSize = bubbleFrame/2
@@ -138,8 +140,6 @@ let game
 
 function startGame() {
     pauseAnimation = false
-    // readyScreen.classList.add("behind")
-    // mainMenu.classList.remove("behind")
     menuContainer.classList.add("behind")
     closeReadyScreen()
     closeTopicMenu()
@@ -147,7 +147,6 @@ function startGame() {
     closePreMenu()
     game = new Game(canvas1)
     renderGame()
-    console.log(bubbleCap)
 }
 
 function generateTopicList(list) {
@@ -164,11 +163,11 @@ generateTopicList(topicList)
 function setTopicButtonListener(target) {
     target.addEventListener("click", ()=>{
         const topic = target.dataset.topic
-        gameWordList = []
+        selectedWordList = []
         selectObj[topic].forEach( word=>{
-            gameWordList.push(allObj[word])
+            selectedWordList.push(allObj[word])
         } )
-        if ( gameMode != "easy" ) {
+        if ( gameMode === "normal" ) {
             unselectedWordList = []
             for ( const key in selectObj ) {
                 if ( key != topic ) {
@@ -177,9 +176,7 @@ function setTopicButtonListener(target) {
                     })
                 }
             }
-            console.log(unselectedWordList)
         } 
-        console.log(gameWordList)
         openReadyScreen()
     })
 }
@@ -266,14 +263,12 @@ function checkWord(text) {
         score++
         if ( score > 5 ) score = 5
         game.setScoreState(score)
-        game.scorebar.text = correctWords[0]
         if ( score === 5 ) {
             gameInProgress = false
             setTimeout( ()=>{
                 scoreGameOver()
             },3000)
         }
-        console.log("Correct word", score)
     } else {
         health--
         if ( health < 0 ) health = 0
@@ -384,34 +379,13 @@ function animate() {
 
 function renderGame() {
     gameInProgress = true
-    if ( gameMode === "challenge" ) {
-        const topic = topicList.sort( ()=> { return 0.5 - Math.random() } )[0]
-        console.log(topic)
-        gameWordList = []
-        selectObj[topicTitles[topic]].forEach( word=>{
-            gameWordList.push(allObj[word])
-        } )
+    correctWords = []
+    gameWordList = [...getGameWordList()]
+    if ( gameMode != "challenge" ) {
+        scoreBarText.textContent = correctWords[0]
+    } else {
+        scoreBarText.textContent = challengeTopic
     }
-        if ( gameMode != "easy" ) {
-            unselectedWordList = []
-            for ( const key in selectObj ) {
-                if ( key != topic ) {
-                    selectObj[key].forEach( word =>{
-                        unselectedWordList.push(allObj[word])
-                    })
-                }
-            }
-            console.log(unselectedWordList)
-        } 
-    modifiedList = gameWordList.sort( () => {return 0.5 - Math.random()} ).slice(0,10)
-    console.log(modifiedList)
-    const targetWord = modifiedList[0]
-    if ( gameMode === "normal" ) {
-        const randoms = unselectedWordList.sort( ()=>{ return 0.5 - Math.random()} ).slice(0,9)
-        modifiedList = [targetWord,...randoms]
-    }
-    correctWords.push(targetWord)
-    scoreBarText.textContent = targetWord
     inGameHud.classList.add("show-in-game-hud")
     game.sendBubbles()
     animate()
@@ -443,8 +417,7 @@ function restartFromGameOver() {
     score = 0
     game.setScoreState(score)
     frameCount = 0
-    poisoned = false
-    mini = false
+    restoreSize()
     startGame()
 }
 
@@ -466,12 +439,47 @@ function menuFromGameOver() {
     bubblesArr = []
     bubbleCap = 8
     correctWords = []
+    selectedWordList = []
+    gameWordList = []
     score = 0
+    game.setScoreState(score)
     health = 5
-    poisoned = false
-    mini = false
+    game.setHealthState(health)
     round = 1
     frameCount = 0
     menuContainer.classList.remove("behind")
+    restoreSize()
     openPreMenu()
+}
+
+function getGameWordList() {
+    if ( gameMode === "easy" ) {
+        const easyList = selectedWordList.sort( ()=> { return 0.5 - Math.random()} ).slice(0,10)
+        correctWords.push(easyList[0])
+        return [...easyList]
+    } else if ( gameMode === "normal" ) {
+        const oneWord = selectedWordList.sort( ()=>{ return 0.5 - Math.random()} ).slice(0,1)
+        correctWords.push(oneWord[0])
+        const randoms = unselectedWordList.sort( ()=>{ return 0.5 -Math.random()} ).slice(0,9)
+        const returnArr = oneWord
+        return returnArr.concat(randoms)
+    } else {
+        challengeTopic = topicList.sort( ()=> { return 0.5 - Math.random() } )[0]
+        selectedWordList = []
+        selectObj[topicTitles[challengeTopic]].forEach( word=>{
+            selectedWordList.push(allObj[word])
+        } )
+        unselectedWordList = []
+        for ( const key in selectObj ) {
+            if ( key != topicTitles[challengeTopic] ) {
+                selectObj[key].forEach( word =>{
+                    unselectedWordList.push(allObj[word])
+                })
+            }
+        }
+        const fiveWords = selectedWordList.sort( ()=>{ return 0.5 - Math.random()} ).slice(0,5)
+        correctWords.push(...fiveWords)
+        const randoms = unselectedWordList.sort( ()=>{ return 0.5 - Math.random()} ).slice(0,15)
+        return [...fiveWords,...randoms]
+    }
 }
