@@ -290,6 +290,7 @@ body {
     padding-right: 5%;
     transform: translateY(-200%);
     transition: transform 300ms ease-in-out;
+    pointer-events: none;
 }
 .in-game-hud.show-in-game-hud {
     transform: translateY(0%);
@@ -331,6 +332,7 @@ body {
     position: initial;
     height: 50%;
     width: auto;
+    pointer-events: all;
 }
 .hud-settings-menu-button img {
     height: 100%;

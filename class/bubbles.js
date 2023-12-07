@@ -2,8 +2,8 @@ class Bubbles {
     constructor(image,frameSize,isPoison,isStar,isHeart,isRound) {
         this.size = bubbleFrame
         this.frameSize = frameSize
-        this.x = Math.random()*(window.innerWidth-this.size)
-        this.y = window.innerHeight + (this.size+(Math.random()*1 + 2))
+        this.x = (this.size*0.43)+(Math.random()*(canvas1.width-this.frameSize))
+        this.y = canvas1.height + (this.size+(Math.random()*1 + 2))
         this.sx = 0
         this.sy = 0
         this.speedX = Math.random()*3 -1.5
@@ -26,10 +26,10 @@ class Bubbles {
         if ( this.speedX < -0.5 ) {
             this.speedX += 0.05
         }
-        if ( this.x < 1 ) {
+        if ( this.x < -10 ) {
             this.speedX *= -1
         }
-        if ( this.x > canvas1.width-(this.frameSize/2)) {
+        if ( this.x > canvas1.width-(this.size-10) ) {
             this.speedX -= this.speedX*2
         }
         if ( this.speedY < 2+this.speedMod && !this.drop) {

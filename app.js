@@ -241,9 +241,9 @@ const mouseObj = {
     y: canvas1.height/2,
     click: false
 }
-window.addEventListener("mousemove",(e)=>{
-    mouseObj.x = e.x
-    mouseObj.y = e.y
+canvas1.addEventListener("mousemove",(e)=>{
+    mouseObj.x = e.offsetX
+    mouseObj.y = e.offsetY
 })
 canvas1.addEventListener("mousedown",()=>{
     mouseObj.click = true
