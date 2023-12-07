@@ -44,8 +44,11 @@ class Bubbles {
         this.size = bubbleFrame
     }
     draw(context) {
-    // context.drawImage(this.image, this.sx, this.sy, increment, frameSize, this.x, this.y, this.size, this.size)
+    if ( this.isPoison) context.filter = "hue-rotate(315deg)"
+    if ( this.isHeart ) context.filter = "hue-rotate(155deg)"
+    if ( this.isStar ) context.filter = "hue-rotate(225deg)"
     context.drawImage(this.image, this.sx, this.sy, this.frameSize, this.frameSize, this.x, this.y, this.size, this.size)
+    context.filter = "none"
     if ( this.isRound ) {
         const fontSize = canvas1.width/50
         const textX = this.x+(this.size/2)
@@ -61,13 +64,13 @@ class Bubbles {
             if ( measurement < bubbleFrame*0.8 ) {
                 context.fillText(this.text,textX,textY)
             } else {
-                context.font = canvas1.width/75+"px Architects Daughter"
+                context.font = canvas1.width/(bubbleSizeModifier*8)+"px Architects Daughter"
                 context.fillText(this.text,textX,textY)
             }
         } else {
             if ( wordsFromText.length > 2 ) {
                 textY -= fontSize/2
-                context.font = canvas1.width/75+"px Architects Daughter"
+                context.font = canvas1.width/65+"px Architects Daughter"
             } else {
                 textY -= fontSize/4
             }

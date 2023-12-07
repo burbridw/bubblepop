@@ -18,6 +18,7 @@ body {
 
 .canvas-container {
     position: relative;
+    margin: 0 auto;
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -38,6 +39,7 @@ body {
     /* background-color: lightblue; */
     /* box-shadow: var(--standard-shadow); */
     width: 60%;
+    max-width: 435px;
     height: 60%;
     border-radius: 8px;
 }
@@ -63,27 +65,30 @@ body {
     width: 90%;
     height: auto;
 }
-.main-menu, .topic-menu, .ready-screen {
+.main-menu, .topic-menu, .ready-screen, .settings-menu, .info-screen {
     position: absolute;
     height: 100%;
     width: 100%;
 }
-.main-menu-header, .main-menu-footer, .topic-menu-header, .topic-menu-footer, .ready-screen-header, .ready-screen-footer {
+.main-menu-header, .main-menu-footer, .topic-menu-header, .topic-menu-footer, .ready-screen-header, .ready-screen-footer, .settings-menu-header, .settings-menu-footer, .info-screen-header, .info-screen-footer {
     height: 10%;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
 }
-.main-menu-body, .topic-menu-body, .ready-screen-body {
+.main-menu-body, .topic-menu-body, .ready-screen-body, .settings-menu-body, .info-screen-body {
     height: 80%;
     width: 100%;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
 }
-.main-menu-body {
+.main-menu-body, .settings-menu-body, .info-screen-body {
     flex-direction: column;
+}
+.settings-menu-body {
+    justify-content: flex-start;
 }
 .topic-menu-body {
     flex-wrap: wrap;
@@ -155,7 +160,7 @@ body {
     width: 100%;
 }
 
-.main-menu-close, .topic-menu-close, .ready-screen-close {
+.main-menu-close, .topic-menu-close, .ready-screen-close, .settings-menu-close, .info-screen-close {
     width: 30%;
     height: 90%;
     /* box-shadow: var(--standard-shadow); */
@@ -165,6 +170,91 @@ body {
     align-items: center;
     text-align: center;
     cursor: pointer;
+}
+.player-select-title, .bubble-size-title {
+    height: 10%;
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.settings-menu-button, .info-screen-button {
+    position: absolute;
+    right: 5%;
+    height: 15%;
+    width: 15%;
+}
+.info-screen-button {
+    left: 5%;
+}
+.settings-menu-button img, .info-screen-button img {
+    height: 85%;
+    width: auto;
+}
+.player-select, .settings-bubble-size {
+    width: 90%;
+    height: 30%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.settings-bubble-size {
+    height: 20%;
+}
+.player-select-arrow, .bubble-size-button {
+    height: 100%;
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.player-select-arrow img, .bubble-size-button img {
+    width: 80%;
+    height: auto;
+}
+.player-select-image, .bubble-size-display {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.bubble-size-display {
+    color: white;
+    font-size: 2rem;
+}
+.player-select-image img {
+    width: 100%;
+    height: auto;
+}
+.info-1, .info-2, .info-4, .info-6 {
+    width: 80%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    font-size: 1.1rem;
+}
+.info-6 {
+    font-size: 0.9rem;
+}
+.info-3, .info-5 {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    cursor: pointer;
+}
+.info-3 img, .info-5 img {
+    box-shadow: 1px 1px 3px 1px black;
+    border-radius: 10px;
+    padding: 2px;
+    height: 90%;
+    width: auto;
 }
 #canvas1 {
     position: absolute;
@@ -235,6 +325,35 @@ body {
     width: 100%;
     height: auto;
     max-height: 100%;
+}
+.hud-settings-menu-button {
+    width: 10%;
+    position: initial;
+    height: 50%;
+    width: auto;
+}
+.hud-settings-menu-button img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+}
+.settings-restart, .settings-mainmenu {
+    position: absolute;
+    top: 80%;
+    height: 12%;
+    width: auto;
+    cursor: pointer;
+}
+.settings-restart img, .settings-mainmenu img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+}
+.settings-restart {
+    left: 8%;
+}
+.settings-mainmenu {
+    right: 8%;
 }
 .game-over-display {
     position: absolute;

@@ -1,12 +1,26 @@
+const canvasContainer = document.querySelector(".canvas-container")
 const canvas1 = document.getElementById("canvas1")
 const ctx = canvas1.getContext("2d")
-canvas1.width = window.innerWidth
 canvas1.height = window.innerHeight
+// canvas1.width = window.innerWidth
+window.innerWidth > window.innerHeight ?  canvas1.width = window.innerHeight : canvas1.width = window.innerWidth
 
 const canvas2 = document.getElementById("canvas2")
 const ctx2 = canvas2.getContext("2d")
-canvas2.width = window.innerWidth
-canvas2.height = window.innerHeight
+canvas2.height = canvas1.height
+canvas2.width = canvas1.width
+
+function resizeCanvasContainer() {
+    let vh = window.innerHeight
+    let vw = window.innerWidth
+    if ( window.innerWidth > window.innerHeight ){
+        canvasContainer.style.setProperty("width",`${vh}px`)
+    } else {
+        canvasContainer.style.setProperty("width",`${vw}px`)
+    }
+}
+
+resizeCanvasContainer()
 
 let bubblesArr = []
 const frameSize = 512
@@ -31,15 +45,22 @@ let challengeTopic
 let modifiedList = []
 let gameWordList = []
 let correctWords = []
-let bubbleFrame = canvas1.width/8
+let bubbleSizeModifier = 6
+let bubbleFrame = canvas1.width/bubbleSizeModifier
 let playerSize = bubbleFrame/2
 let playerCollissionRange = playerSize/2
 let score = 0
 let health = 5
 let poisoned = false
 let mini = false
+let bubbleSize = bubbleFrame*0.43
 
-let bubbleSize = bubbleFrame*0.42
+function refreshSizes() {
+    bubbleFrame = canvas1.width/bubbleSizeModifier
+    playerSize = bubbleFrame/2
+    playerCollissionRange = playerSize/2
+    bubbleSize = bubbleFrame*0.43
+}
 
 const menuContainer = document.querySelector(".menu-container")
 const preMenu = document.querySelector(".pre-menu")
@@ -183,14 +204,14 @@ function setTopicButtonListener(target) {
 
 window.addEventListener("resize",()=>{
     setTimeout( ()=>{
-        canvas1.width = window.innerWidth
+        resizeCanvasContainer()
         canvas1.height = window.innerHeight
-        bubbleFrame = canvas1.width/8
-        playerSize = bubbleFrame / 2
+        window.innerWidth >= window.innerHeight ? canvas1.width = window.innerHeight : canvas1.width = window.innerWidth
+        canvas2.height = canvas1.height
+        canvas2.width = canvas1.width
+        refreshSizes()
         if ( poisoned ) playerSize = bubbleFrame * 2
         if ( mini ) playerSize = bubbleFrame / 4
-        playerCollissionRange = playerSize/2
-        bubbleSize = bubbleFrame*0.4
         if ( gameInProgress ) {
             for ( let i = 0; i < bubblesArr.length; i++ ) {
                 bubblesArr[i].update()
@@ -408,6 +429,8 @@ function scoreGameOver() {
 
 function restartFromGameOver() {
     gameOverDisplay.classList.remove("show-game-over")
+    settingsMenu.classList.add("behind")
+    menuContainer.classList.add("behind")
     bubblesArr = []
     bubbleCap = 8
     correctWords = []
@@ -435,6 +458,7 @@ function continueFromGameOver() {
 
 function menuFromGameOver() {
     gameOverDisplay.classList.remove("show-game-over")
+    settingsMenu.classList.add("behind")
     ctx.clearRect(0,0,canvas1.width,canvas1.height)
     bubblesArr = []
     bubbleCap = 8
@@ -481,5 +505,191 @@ function getGameWordList() {
         correctWords.push(...fiveWords)
         const randoms = unselectedWordList.sort( ()=>{ return 0.5 - Math.random()} ).slice(0,15)
         return [...fiveWords,...randoms]
+    }
+}
+
+const playerImages = ["./images/choosefish-red.png","./images/choosefish-blue.png","./images/choosefish-green.png"]
+let currentPlayerImage = 0
+
+const playerSelectLeft = document.querySelector(".player-select-left")
+const playerSelectRight = document.querySelector(".player-select-right")
+const playerSelectImage = document.querySelector("#currentplayerimage")
+
+
+playerSelectLeft.addEventListener("click",()=>{
+    currentPlayerImage--
+    if ( currentPlayerImage < 0 ) {
+        currentPlayerImage = 2
+    }
+    setCurrentPlayerImage()
+})
+playerSelectRight.addEventListener("click",()=>{
+    currentPlayerImage++
+    if ( currentPlayerImage > 2 ) {
+        currentPlayerImage = 0
+    }
+    setCurrentPlayerImage()
+})
+
+function setCurrentPlayerImage() {
+    playerSelectImage.setAttribute("src",playerImages[currentPlayerImage])
+}
+
+setCurrentPlayerImage()
+
+const bubbleSizes = ["smaller","small","big","bigger"]
+const bubbleSizesActual = [8,6,5,4]
+let currentBubbleSize = 1
+
+const bubbleSizeMinus = document.querySelector(".bubble-size-minus")
+const bubbleSizePlus = document.querySelector(".bubble-size-plus")
+const bubbleSizeDisplay = document.querySelector(".bubble-size-display")
+
+function setCurrentBubbleSize() {
+    bubbleSizeDisplay.textContent = bubbleSizes[currentBubbleSize]
+    bubbleSizeModifier = bubbleSizesActual[currentBubbleSize]
+    refreshSizes()
+}
+setCurrentBubbleSize()
+
+bubbleSizeMinus.addEventListener("click",()=>{
+    currentBubbleSize--
+    if ( currentBubbleSize < 0 ) {
+        currentBubbleSize = 3
+    }
+    setCurrentBubbleSize()
+})
+bubbleSizePlus.addEventListener("click",()=>{
+    currentBubbleSize++
+    if ( currentBubbleSize > 3 ) {
+        currentBubbleSize = 0
+    }
+    setCurrentBubbleSize()
+})
+
+const infoScreen = document.querySelector(".info-screen")
+const infoScreenClose = document.querySelector(".info-screen-close")
+const infoScreenButtons = document.querySelectorAll(".info-screen-button")
+infoScreenButtons.forEach( button=>{
+    button.addEventListener("click",()=>{
+        openInfo(button.dataset.entrypoint)
+    })
+})
+
+const settingsMenu = document.querySelector(".settings-menu")
+const settingsMenuClose = document.querySelector(".settings-menu-close")
+const settingsMenuButtons = document.querySelectorAll(".settings-menu-button")
+settingsMenuButtons.forEach( button=>{
+    button.addEventListener("click",()=>{
+        openSettings(button.dataset.entrypoint)
+    })
+})
+
+function openSettings(entryPoint) {
+    switch(entryPoint){
+        case "mainmenu":
+            mainMenu.classList.add("behind")
+            settingsMenu.classList.remove("behind")
+            settingsMenuClose.dataset.exitpoint = "mainmenu"
+            break
+        case "topicmenu":
+            topicMenu.classList.add("behind")
+            settingsMenu.classList.remove("behind")
+            settingsMenuClose.dataset.exitpoint = "topicmenu"
+            break
+        case "readymenu": 
+            readyScreen.classList.add("behind")
+            settingsMenu.classList.remove("behind")
+            settingsMenuClose.dataset.exitpoint = "readymenu"
+            break
+        case "gameover":
+            gameOverDisplay.classList.add("behind")
+            menuContainer.classList.remove("behind")
+            settingsMenu.classList.remove("behind")
+            settingsMenuClose.dataset.exitpoint = "gameover"
+            break
+        default:
+            settingsShowGameButtons()
+            pauseAnimation = true
+            menuContainer.classList.remove("behind")
+            settingsMenu.classList.remove("behind")
+            settingsMenuClose.dataset.exitpoint = "game"
+    }
+}
+
+settingsMenuClose.addEventListener("click",()=>{
+    closeSettings(settingsMenuClose.dataset.exitpoint)
+})
+
+function closeSettings(exitPoint) {
+    settingsMenu.classList.add("behind")
+    settingsHideGameButtons()
+    switch(exitPoint){
+        case "mainmenu":
+            mainMenu.classList.remove("behind")
+            break
+        case "topicmenu":
+            topicMenu.classList.remove("behind")
+            break
+        case "readymenu":
+            readyScreen.classList.remove("behind")
+            break
+        case "gameover":
+            gameOverDisplay.classList.remove("behind")
+            menuContainer.classList.add("behind")
+            break
+        default:
+            menuContainer.classList.add("behind")
+            pauseAnimation = false
+            animate()
+    }
+}
+
+const settingsRestart = document.querySelector(".settings-restart")
+settingsRestart.addEventListener("click",restartFromGameOver)
+const settingsMainMenu = document.querySelector(".settings-mainmenu")
+settingsMainMenu.addEventListener("click",menuFromGameOver)
+
+function settingsShowGameButtons() {
+    settingsRestart.classList.remove("behind")
+    settingsMainMenu.classList.remove("behind")
+}
+function settingsHideGameButtons() {
+    settingsRestart.classList.add("behind")
+    settingsMainMenu.classList.add("behind")
+}
+function openInfo(entryPoint) {
+    switch(entryPoint){
+        case "mainmenu":
+            mainMenu.classList.add("behind")
+            infoScreen.classList.remove("behind")
+            infoScreenClose.dataset.exitpoint = "mainmenu"
+            break
+        case "topicmenu":
+            topicMenu.classList.add("behind")
+            infoScreen.classList.remove("behind")
+            infoScreenClose.dataset.exitpoint = "topicmenu"
+            break
+        case "readymenu": 
+            readyScreen.classList.add("behind")
+            infoScreen.classList.remove("behind")
+            infoScreenClose.dataset.exitpoint = "readymenu"
+    }
+}
+infoScreenClose.addEventListener("click",()=>{
+    closeInfo(infoScreenClose.dataset.exitpoint)
+})
+
+function closeInfo(exitPoint) {
+    infoScreen.classList.add("behind")
+    switch(exitPoint){
+        case "mainmenu":
+            mainMenu.classList.remove("behind")
+            break
+        case "topicmenu":
+            topicMenu.classList.remove("behind")
+            break
+        case "readymenu":
+            readyScreen.classList.remove("behind")
     }
 }

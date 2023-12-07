@@ -1,20 +1,12 @@
 class HealthBar {
     constructor(game,canvas) {
         this.game = game
-        // this.width = canvas.width/5
-        // this.height = this.width/4
-        // this.x = (canvas.width - this.width) - 50
-        // this.y = this.height
         this.image = hbar5.getAttribute("src")
     }
-    // draw(context) {
-    //     context.drawImage(this.image,this.x,this.y,this.width,this.height)
-    // }
     displayHealth() {
         hBarDisplay.setAttribute("src",this.image)
     }
 }
-
 
 class bar5 extends HealthBar {
     changeHp() {

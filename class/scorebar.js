@@ -8,17 +8,6 @@ class ScoreBar {
         this.y = this.height/2
         this.image = score5.getAttribute("src")
     }
-    // draw(context) {
-    //     context.font = this.canvas.width/30+"px Architects Daughter"
-    //     context.drawImage(this.image,this.x,this.y,this.width,this.height)
-    //     context.fillStyle = "white"
-    //     context.textBaseline = "middle"
-    //     context.textAlign = "center"
-    //     const measureText = context.measureText(this.text)
-    //     const measurement = measureText.width
-    //     if ( measurement > this.width/2) context.font = this.canvas.width/50+"px Architects Daughter"
-    //     context.fillText(this.text,(this.x+(this.width*0.4)),this.y+(this.height/2))
-    // }
     displayScore() {
         scoreBarDisplay.setAttribute("src",this.image)
     }

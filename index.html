@@ -21,6 +21,12 @@
                 <span>START GAME</span>
             </div>
             <div class="main-menu behind">
+                <div class="info-screen-button" data-entrypoint="mainmenu">
+                    <img src="./images/info.png">
+                </div>
+                <div class="settings-menu-button" data-entrypoint="mainmenu">
+                    <img src="./images/settings.png">
+                </div>
                 <div class="main-menu-header">
                     Choose a game mode
                 </div>
@@ -43,6 +49,12 @@
                 </div>
             </div>
             <div class="topic-menu behind">
+                <div class="info-screen-button" data-entrypoint="topicmenu">
+                    <img src="./images/info.png">
+                </div>
+                <div class="settings-menu-button" data-entrypoint="topicmenu">
+                    <img src="./images/settings.png">
+                </div>
                 <div class="topic-menu-header">Choose a topic</div>
                 <div class="topic-menu-body">
 
@@ -52,7 +64,13 @@
                 </div>
             </div>
             <div class="ready-screen behind">
-                <div class="ready-screen-header">Hit START when you are ready</div>
+                <div class="info-screen-button" data-entrypoint="readymenu">
+                    <img src="./images/info.png">
+                </div>
+                <div class="settings-menu-button" data-entrypoint="readymenu">
+                    <img src="./images/settings.png">
+                </div>
+                <div class="ready-screen-header">Hit START to begin</div>
                 <div class="ready-screen-body">
                     <div class="ready-screen-start">
                         <img src="./images/block.png">
@@ -61,6 +79,74 @@
                 </div>
                 <div class="ready-screen-footer">
                     <div class="ready-screen-close"><img src="./images/back.png"></div>
+                </div>
+            </div>
+            <div class="settings-menu behind">
+                <div class="settings-menu-header">
+                    Customise game settings
+                </div>
+                <div class="settings-menu-body">
+                    <div class="player-select-title">Choose your fish</div>
+                    <div class="player-select">
+                        <div class="player-select-arrow player-select-left">
+                            <img src="./images/arrowleft.png">
+                        </div>
+                        <div class="player-select-image">
+                            <img id="currentplayerimage" src="">
+                        </div>
+                        <div class="player-select-arrow player-select-right">
+                            <img src="./images/arrowright.png">
+                        </div>
+                    </div>
+                    <div class="bubble-size-title">Choose bubble size</div>
+                    <div class="settings-bubble-size">
+                        <div class="bubble-size-button bubble-size-minus">
+                            <img src="./images/minus.png">
+                        </div>
+                        <div class="bubble-size-display">small
+                        </div>
+                        <div class="bubble-size-button bubble-size-plus">
+                            <img src="./images/plus.png">
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-restart behind">
+                    <img src="./images/restart.png">
+                </div>
+                <div class="settings-mainmenu behind">
+                    <img src="./images/menu.png">
+                </div>
+                <div class="settings-menu-footer">
+                    <div class="settings-menu-close"><img src="./images/back.png"></div>
+                </div>
+            </div>
+            <div class="info-screen behind">
+                <div class="info-screen-header">
+                    About Bubble Pop
+                </div>
+                <div class="info-screen-body">
+                    <div class="info-1">
+                        Thank you for playing bubble pop!
+                    </div>
+                    <div class="info-2">
+                        Find more great games and apps at Plip-plop-land
+                    </div>
+                    <div class="info-3">
+                        <img src="./images/pliplogo.png">
+                    </div>
+                    <div class="info-4">
+                        Learn more about Plip-plop-land on Twitter and Youtube
+                    </div>
+                    <div class="info-5">
+                        <img src="./images/twitter.png">
+                        <img src="./images/youtube.png">
+                    </div>
+                    <div class="info-6">
+                        All rights of ownership and authorship reserved
+                    </div>
+                </div>
+                <div class="info-screen-footer">
+                    <div class="info-screen-close"><img src="./images/back.png"></div>
                 </div>
             </div>
         </div>
@@ -72,9 +158,15 @@
             <div class="hbar-container">
                 <img class="hud-back-image" id="hbardisplay" src="./images/hbar/hbar5.png">
             </div>
+            <div class="settings-menu-button hud-settings-menu-button" data-entrypoint="game">
+                <img src="./images/settings.png">
+            </div>
         </div>
         <div class="game-over-display">
             <img src="./images/gameover.png" class="game-over-display-background">
+            <div class="settings-menu-button" data-entrypoint="gameover">
+                <img src="./images/settings.png">
+            </div>
             <div class="game-over-text"></div>
             <div class="game-over-button game-over-restart">
                 <img src="./images/restart.png">
