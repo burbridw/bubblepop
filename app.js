@@ -58,6 +58,8 @@ let bubbleSize = bubbleFrame*0.43
 function refreshSizes() {
     bubbleFrame = canvas1.width/bubbleSizeModifier
     playerSize = bubbleFrame/2
+    if ( poisoned ) playerSize = bubbleFrame * 2
+    if ( mini ) playerSize = bubbleFrame / 4
     playerCollissionRange = playerSize/2
     bubbleSize = bubbleFrame*0.43
 }
@@ -210,8 +212,6 @@ window.addEventListener("resize",()=>{
         canvas2.height = canvas1.height
         canvas2.width = canvas1.width
         refreshSizes()
-        if ( poisoned ) playerSize = bubbleFrame * 2
-        if ( mini ) playerSize = bubbleFrame / 4
         if ( gameInProgress ) {
             for ( let i = 0; i < bubblesArr.length; i++ ) {
                 bubblesArr[i].update()
