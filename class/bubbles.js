@@ -1,9 +1,10 @@
 class Bubbles {
-    constructor(image,frameSize,isPoison,isStar,isHeart,isRound) {
+    constructor(game,image,frameSize,isPoison,isStar,isHeart,isRound) {
+        this.game = game
         this.size = bubbleFrame
         this.frameSize = frameSize
-        this.x = (this.size*0.43)+(Math.random()*(canvas1.width-this.frameSize))
-        this.y = canvas1.height + (this.size+(Math.random()*1 + 2))
+        this.x = Math.random()*(canvas1.width-this.size)
+        this.y = canvas1.height + (this.size*(Math.random()*1 + 2))
         this.sx = 0
         this.sy = 0
         this.speedX = Math.random()*3 -1.5
@@ -18,6 +19,7 @@ class Bubbles {
         this.isStar = isStar
         this.isHeart = isHeart
         this.isRound = isRound
+        this.sound = this.game.popSounds[Math.floor(Math.random()*this.game.popSounds.length)]
     }
     update() {
         if ( this.speedX > 0.5) {
@@ -42,6 +44,10 @@ class Bubbles {
         this.y -= this.speedY
         this.x += this.speedX
         this.size = bubbleFrame
+    }
+    play() {
+        this.sound.currentTime = 0
+        this.sound.play()
     }
     draw(context) {
     if ( this.isPoison) context.filter = "hue-rotate(315deg)"

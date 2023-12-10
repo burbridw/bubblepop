@@ -10,6 +10,11 @@ class Game {
         this.scoreStates = [new scorebar0(this,this.canvas), new scorebar1(this,this.canvas), new scorebar2(this,this.canvas), new scorebar3(this,this.canvas), new scorebar4(this,this.canvas), new scorebar5(this,this.canvas)]
         this.scorebar = this.scoreStates[0]
         this.scorebar.setScore()
+        this.popSound1 = document.getElementById("popsound1")
+        this.popSound2 = document.getElementById("popsound2")
+        this.popSound3 = document.getElementById("popsound3")
+        this.popSound4 = document.getElementById("popsound4")
+        this.popSounds = [this.popSound1,this.popSound2,this.popSound3,this.popSound4]
     }
     render(context) {
         detectCollission()
@@ -31,10 +36,11 @@ class Game {
     }
     sendBubbles() {
         const bubbleFlow = setInterval( ()=>{
-            let newAdd = new Bubbles(bubble,frameSize,false,false,false,true)
+            let newAdd = new Bubbles(this,bubble,frameSize,false,false,false,true)
             bubblesArr.push( newAdd )
-            if (bubblesArr.length > bubbleCap) {
+            if (bubblesArr.length > bubbleCap || pauseAnimation) {
                 clearInterval(bubbleFlow)
+                sendBubblesCleared = true
             }
         },1000)
     }
@@ -53,13 +59,13 @@ class Game {
     chooseNewBubble() {
         const randomNumber = Math.random()
         if ( randomNumber > 0.985 ) {
-            return new Bubbles(poisonbubble,frameSize,true,false,false,false)
+            return new Bubbles(this,poisonbubble,frameSize,true,false,false,false)
         } else if ( randomNumber > 0.96 ) {
-            return new Bubbles(starbubble,frameSize,false,true,false,false)
+            return new Bubbles(this,starbubble,frameSize,false,true,false,false)
         } else if ( randomNumber > 0.93) {
-            return new Bubbles(heartbubble,frameSize,false,false,true,false)
+            return new Bubbles(this,heartbubble,frameSize,false,false,true,false)
         } else {
-            return new Bubbles(bubble,frameSize,false,false,false,true)
+            return new Bubbles(this,bubble,frameSize,false,false,false,true)
         }
     }
 }

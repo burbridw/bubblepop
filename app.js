@@ -37,6 +37,7 @@ let bubbleCap = 8
 let gameInProgress = false
 let pauseAnimation = false
 let keepCount = true
+let sendBubblesCleared = false
 let frameCount = 0
 let increment = 3675/5
 let selectedWordList = []
@@ -264,6 +265,7 @@ window.addEventListener("mouseup",()=>{
 function bubblePop(target) {
     target.image = popimage
     target.frameSize = 735
+    target.play()
     const popTimer = setInterval( ()=>{
         if ( target.sx < increment*5 ) {
             target.sx += increment
@@ -408,6 +410,7 @@ function renderGame() {
         scoreBarText.textContent = challengeTopic
     }
     inGameHud.classList.add("show-in-game-hud")
+    sendBubblesCleared = false
     game.sendBubbles()
     animate()
 }
