@@ -12,8 +12,8 @@
 <body>
     <div class="canvas-container">
         <img src="./images/background.png" id="background">
-        <canvas id="canvas2"></canvas>
         <canvas id="canvas1"></canvas>
+        <canvas id="canvas2"></canvas>
         <div class="menu-container">
             <img src="./images/gameover.png" class="menu-background">
             <div class="pre-menu"> 
@@ -92,7 +92,7 @@
                             <img src="./images/arrowleft.png">
                         </div>
                         <div class="player-select-image">
-                            <img id="currentplayerimage" src="">
+                            <img id="currentplayerimage" src="./images/choosefish-red.png">
                         </div>
                         <div class="player-select-arrow player-select-right">
                             <img src="./images/arrowright.png">
@@ -107,6 +107,14 @@
                         </div>
                         <div class="bubble-size-button bubble-size-plus">
                             <img src="./images/plus.png">
+                        </div>
+                    </div>
+                    <div class="settings-audio">
+                        <div class="audio-on">
+                            <img src="./images/soundon.png" alt="sound on">
+                        </div>
+                        <div class="audio-off disabled">
+                            <img src="./images/soundoff.png" alt="sound off">
                         </div>
                     </div>
                 </div>
@@ -191,9 +199,20 @@
     <img src="./images/starbubble.png" class="startup-images" id="starbubble">
     <img src="./images/heartbubble.png" class="startup-images" id="heartbubble">
     <img src="./images/poisonbubble.png" class="startup-images" id="poisonbubble">
+    <img src="./images/choosefish-red.png" class="startup-images" id="choosefishred">
+    <img src="./images/choosefish-blue.png" class="startup-images" id="choosefishblue">
+    <img src="./images/choosefish-green.png" class="startup-images" id="choosefishgreen">
+    <img src="./images/choosefish-yellow.png" class="startup-images" id="choosefishyellow">
     <img src="./images/playerfishred.png" class="startup-images" id="playerimageleft">
-    <img src="./images/playerfishredright.png" class="startup-images" id="playerimageright">
     <img src="./images/playerfishredinv.png" class="startup-images" id="playerimageinv">
+    <img src="./images/playerfishred.png" class="startup-images" id="playerfishred">
+    <img src="./images/playerfishredinv.png" class="startup-images" id="playerfishredinv">
+    <img src="./images/playerfishblue.png" class="startup-images" id="playerfishblue">
+    <img src="./images/playerfishblueinv.png" class="startup-images" id="playerfishblueinv">
+    <img src="./images/playerfishgreen.png" class="startup-images" id="playerfishgreen">
+    <img src="./images/playerfishgreeninv.png" class="startup-images" id="playerfishgreeninv">
+    <img src="./images/playerfishyellow.png" class="startup-images" id="playerfishyellow">
+    <img src="./images/playerfishyellowinv.png" class="startup-images" id="playerfishyellowinv">
     <img src="./images/hbar/hbar5.png" class="startup-images" id="hbar5">
     <img src="./images/hbar/hbar4.png" class="startup-images" id="hbar4">
     <img src="./images/hbar/hbar3.png" class="startup-images" id="hbar3">
@@ -212,8 +231,8 @@
     <audio src="./sounds/bubblepop4.mp3" id="popsound4"></audio>
     <script src="./class/player.js"></script>
     <script src="./class/bubbles.js"></script>
-    <script src="class/scorebar.js"></script>
-    <script src="class/healthbar.js"></script>
+    <script src="./class/scorebar.js"></script>
+    <script src="./class/healthbar.js"></script>
     <script src="./class/game.js"></script>
     <script src="lists.js"></script>
     <script src="app.js"></script>

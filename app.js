@@ -2,7 +2,6 @@ const canvasContainer = document.querySelector(".canvas-container")
 const canvas1 = document.getElementById("canvas1")
 const ctx = canvas1.getContext("2d")
 canvas1.height = window.innerHeight
-// canvas1.width = window.innerWidth
 window.innerWidth > window.innerHeight ?  canvas1.width = window.innerHeight : canvas1.width = window.innerWidth
 
 const canvas2 = document.getElementById("canvas2")
@@ -31,13 +30,23 @@ const gravity = {
     y: 0.1
 }
 
+const playerImages = ["redfish","bluefish","greenfish", "yellowfish"]
+const bubbleSizes = ["smaller","small","big","bigger"]
+const bubbleSizesActual = [8,6,5,4]
+
+const bubbleSizeMinus = document.querySelector(".bubble-size-minus")
+const bubbleSizePlus = document.querySelector(".bubble-size-plus")
+const bubbleSizeDisplay = document.querySelector(".bubble-size-display")
+
 let gameMode
 let round = 1
 let bubbleCap = 8
 let gameInProgress = false
 let pauseAnimation = false
+let nightLevel = false
 let keepCount = true
-let sendBubblesCleared = false
+let sendBubblesInterrupted = false
+let audioOn = true
 let frameCount = 0
 let increment = 3675/5
 let selectedWordList = []
@@ -46,6 +55,7 @@ let challengeTopic
 let modifiedList = []
 let gameWordList = []
 let correctWords = []
+let currentBubbleSize = 1
 let bubbleSizeModifier = 6
 let bubbleFrame = canvas1.width/bubbleSizeModifier
 let playerSize = bubbleFrame/2
@@ -55,6 +65,18 @@ let health = 5
 let poisoned = false
 let mini = false
 let bubbleSize = bubbleFrame*0.43
+let currentPlayerImage = 0
+let playerFish = playerImages[currentPlayerImage]
+let imageLeft
+let imageInv
+
+setPlayerImages()
+
+function setPlayerImages() {
+    playerFish = playerImages[currentPlayerImage]
+    imageLeft = document.getElementById(fishImages[playerFish][0].getAttribute("id"))
+    imageInv = document.getElementById(fishImages[playerFish][1].getAttribute("id"))
+}
 
 function refreshSizes() {
     bubbleFrame = canvas1.width/bubbleSizeModifier
@@ -75,6 +97,17 @@ const inGameHud = document.querySelector(".in-game-hud")
 const hBarDisplay = document.querySelector("#hbardisplay")
 const scoreBarDisplay = document.querySelector("#scorebardisplay")
 const scoreBarText = document.querySelector(".scorebar-text")
+const playerSelectLeft = document.querySelector(".player-select-left")
+const playerSelectRight = document.querySelector(".player-select-right")
+const playerSelectImage = document.querySelector("#currentplayerimage")
+const infoScreen = document.querySelector(".info-screen")
+const infoScreenClose = document.querySelector(".info-screen-close")
+const infoScreenButtons = document.querySelectorAll(".info-screen-button")
+const settingsMenu = document.querySelector(".settings-menu")
+const settingsMenuClose = document.querySelector(".settings-menu-close")
+const settingsMenuButtons = document.querySelectorAll(".settings-menu-button")
+const settingsRestart = document.querySelector(".settings-restart")
+const settingsMainMenu = document.querySelector(".settings-mainmenu")
 
 const mainMenuClose = document.querySelector(".main-menu-close")
 const topicMenuClose = document.querySelector(".topic-menu-close")
@@ -86,17 +119,22 @@ const gameOverMenu = document.querySelector(".game-over-menu")
 const gameOverRestart = document.querySelector(".game-over-restart")
 const gameOverContinue = document.querySelector(".game-over-continue")
 const gameOverText = document.querySelector(".game-over-text")
+const audioOnButton = document.querySelector(".audio-on")
+const audioOffButton = document.querySelector(".audio-off")
 
 gameOverRestart.addEventListener("click",restartFromGameOver)
 gameOverContinue.addEventListener("click",continueFromGameOver)
 gameOverMenu.addEventListener("click",menuFromGameOver)
-
+audioOnButton.addEventListener("click",audioSetOn)
+audioOffButton.addEventListener("click",audioSetOff)
 
 preMenu.addEventListener("click",openMainMenu)
 mainMenuClose.addEventListener("click",closeMainMenu)
 topicMenuClose.addEventListener("click",closeTopicMenu)
 readyScreenClose.addEventListener("click",closeReadyScreen)
 readyScreenStart.addEventListener("click",startGame)
+settingsRestart.addEventListener("click",restartFromGameOver)
+settingsMainMenu.addEventListener("click",menuFromGameOver)
 
 mainMenuButtons.forEach( button=>{
     button.addEventListener("click",()=>{
@@ -170,6 +208,11 @@ function startGame() {
     closeMainMenu()
     closePreMenu()
     game = new Game(canvas1)
+    if ( round%3 === 0 ) {
+        nightLevel = true
+    } else {
+        nightLevel = false
+    }
     renderGame()
 }
 
@@ -213,14 +256,6 @@ window.addEventListener("resize",()=>{
         canvas2.height = canvas1.height
         canvas2.width = canvas1.width
         refreshSizes()
-        if ( gameInProgress ) {
-            for ( let i = 0; i < bubblesArr.length; i++ ) {
-                bubblesArr[i].update()
-                bubblesArr[i].draw(ctx)
-            }
-            game.player.update()
-            game.player.draw(ctx)
-        }
     },1)
 })
 
@@ -265,7 +300,7 @@ window.addEventListener("mouseup",()=>{
 function bubblePop(target) {
     target.image = popimage
     target.frameSize = 735
-    target.play()
+    if ( audioOn ) target.play()
     const popTimer = setInterval( ()=>{
         if ( target.sx < increment*5 ) {
             target.sx += increment
@@ -410,7 +445,6 @@ function renderGame() {
         scoreBarText.textContent = challengeTopic
     }
     inGameHud.classList.add("show-in-game-hud")
-    sendBubblesCleared = false
     game.sendBubbles()
     animate()
 }
@@ -463,6 +497,8 @@ function menuFromGameOver() {
     gameOverDisplay.classList.remove("show-game-over")
     settingsMenu.classList.add("behind")
     ctx.clearRect(0,0,canvas1.width,canvas1.height)
+    ctx2.clearRect(0,0,canvas1.width,canvas1.height)
+    inGameHud.classList.remove("show-in-game-hud")
     bubblesArr = []
     bubbleCap = 8
     correctWords = []
@@ -511,42 +547,30 @@ function getGameWordList() {
     }
 }
 
-const playerImages = ["./images/choosefish-red.png","./images/choosefish-blue.png","./images/choosefish-green.png"]
-let currentPlayerImage = 0
-
-const playerSelectLeft = document.querySelector(".player-select-left")
-const playerSelectRight = document.querySelector(".player-select-right")
-const playerSelectImage = document.querySelector("#currentplayerimage")
-
-
 playerSelectLeft.addEventListener("click",()=>{
     currentPlayerImage--
     if ( currentPlayerImage < 0 ) {
-        currentPlayerImage = 2
+        currentPlayerImage = 3
     }
     setCurrentPlayerImage()
 })
 playerSelectRight.addEventListener("click",()=>{
     currentPlayerImage++
-    if ( currentPlayerImage > 2 ) {
+    if ( currentPlayerImage > 3 ) {
         currentPlayerImage = 0
     }
     setCurrentPlayerImage()
 })
 
 function setCurrentPlayerImage() {
-    playerSelectImage.setAttribute("src",playerImages[currentPlayerImage])
+    const getImage = fishImages[playerImages[currentPlayerImage]][2].getAttribute("src")
+    playerSelectImage.setAttribute("src",getImage)
+    setPlayerImages()
+    if ( game ) {
+        game.player.imageleft = fishImages[playerImages[currentPlayerImage]][0]
+        game.player.imageinv = fishImages[playerImages[currentPlayerImage]][1]
+    }
 }
-
-setCurrentPlayerImage()
-
-const bubbleSizes = ["smaller","small","big","bigger"]
-const bubbleSizesActual = [8,6,5,4]
-let currentBubbleSize = 1
-
-const bubbleSizeMinus = document.querySelector(".bubble-size-minus")
-const bubbleSizePlus = document.querySelector(".bubble-size-plus")
-const bubbleSizeDisplay = document.querySelector(".bubble-size-display")
 
 function setCurrentBubbleSize() {
     bubbleSizeDisplay.textContent = bubbleSizes[currentBubbleSize]
@@ -570,18 +594,12 @@ bubbleSizePlus.addEventListener("click",()=>{
     setCurrentBubbleSize()
 })
 
-const infoScreen = document.querySelector(".info-screen")
-const infoScreenClose = document.querySelector(".info-screen-close")
-const infoScreenButtons = document.querySelectorAll(".info-screen-button")
 infoScreenButtons.forEach( button=>{
     button.addEventListener("click",()=>{
         openInfo(button.dataset.entrypoint)
     })
 })
 
-const settingsMenu = document.querySelector(".settings-menu")
-const settingsMenuClose = document.querySelector(".settings-menu-close")
-const settingsMenuButtons = document.querySelectorAll(".settings-menu-button")
 settingsMenuButtons.forEach( button=>{
     button.addEventListener("click",()=>{
         openSettings(button.dataset.entrypoint)
@@ -644,14 +662,10 @@ function closeSettings(exitPoint) {
         default:
             menuContainer.classList.add("behind")
             pauseAnimation = false
+            if ( sendBubblesInterrupted ) game.sendBubbles()
             animate()
     }
 }
-
-const settingsRestart = document.querySelector(".settings-restart")
-settingsRestart.addEventListener("click",restartFromGameOver)
-const settingsMainMenu = document.querySelector(".settings-mainmenu")
-settingsMainMenu.addEventListener("click",menuFromGameOver)
 
 function settingsShowGameButtons() {
     settingsRestart.classList.remove("behind")
@@ -695,4 +709,15 @@ function closeInfo(exitPoint) {
         case "readymenu":
             readyScreen.classList.remove("behind")
     }
+}
+
+function audioSetOn() {
+    audioOffButton.classList.add("disabled")
+    audioOnButton.classList.remove("disabled")
+    audioOn = true
+}
+function audioSetOff() {
+    audioOffButton.classList.remove("disabled")
+    audioOnButton.classList.add("disabled")
+    audioOn = false
 }

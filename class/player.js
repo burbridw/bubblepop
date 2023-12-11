@@ -51,4 +51,17 @@ class Player {
         // context.strokeStyle = "black"
         // context.stroke()
     }
+    night(context2) {
+        context2.rect(0,0,this.canvas.width,this.canvas.height)
+        context2.fillStyle = "rgba(0,0,0,0.8)"
+        context2.fill()
+    }
+    clearCircle(context2,x,y,radius) {
+        const radgrad = context2.createRadialGradient(x,y,radius*0.66,x,y,radius*1.5)
+        radgrad.addColorStop(0,"rgba(0,0,0,0")
+        radgrad.addColorStop(1,"rgba(0,0,0,0.7")
+        context2.fillStyle = radgrad
+        context2.clearRect(0, 0,(radius*2)*4,(radius*2)*4)
+        context2.fillRect(0, 0,this.canvas.width,this.canvas.height)
+    }
 }

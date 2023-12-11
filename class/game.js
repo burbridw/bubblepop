@@ -3,7 +3,7 @@ class Game {
         this.canvas = canvas
         this.width = canvas.width
         this.height = canvas.height
-        this.player = new Player(this,this.canvas,playerSize,playerimageleft,playerimageinv)
+        this.player = new Player(this,this.canvas,playerSize,imageLeft,imageInv)
         this.healthStates = [new bar0(this,this.canvas), new bar1(this,this.canvas), new bar2(this,this.canvas), new bar3(this,this.canvas), new bar4(this,this.canvas), new bar5(this,this.canvas)]
         this.healthbar = this.healthStates[5]
         this.healthbar.changeHp()
@@ -23,6 +23,10 @@ class Game {
         this.drawBubbles()
         this.player.update()
         this.player.draw(context)
+        if ( nightLevel ) {
+            this.player.night(ctx2)
+            this.player.clearCircle(ctx2,this.player.x,this.player.y,(this.canvas.width/4)+this.player.size)
+        }
     }
     setHealthState(state) {
         this.healthbar = this.healthStates[state]
@@ -35,12 +39,13 @@ class Game {
         this.scorebar.displayScore()
     }
     sendBubbles() {
+        sendBubblesInterrupted = false
         const bubbleFlow = setInterval( ()=>{
             let newAdd = new Bubbles(this,bubble,frameSize,false,false,false,true)
             bubblesArr.push( newAdd )
             if (bubblesArr.length > bubbleCap || pauseAnimation) {
                 clearInterval(bubbleFlow)
-                sendBubblesCleared = true
+                if ( bubblesArr.length < bubbleCap ) sendBubblesInterrupted = true
             }
         },1000)
     }

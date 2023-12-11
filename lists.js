@@ -111,3 +111,10 @@ const topicTitles = {
 }
 
 const topicList = Object.keys(topicTitles)
+
+const fishImages = {
+    "redfish": [playerfishred,playerfishredinv,choosefishred],
+    "bluefish": [playerfishblue,playerfishblueinv,choosefishblue],
+    "greenfish": [playerfishgreen,playerfishgreeninv,choosefishgreen],
+    "yellowfish": [playerfishyellow,playerfishyellowinv,choosefishyellow],
+}
