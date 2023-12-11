@@ -24,8 +24,8 @@ class Game {
         this.player.update()
         this.player.draw(context)
         if ( nightLevel ) {
-            this.player.night(ctx2)
-            this.player.clearCircle(ctx2,this.player.x,this.player.y,(this.canvas.width/4)+this.player.size)
+            // this.player.night(ctx2)
+            this.player.clearCircle(ctx2,this.player.x,this.player.y,this.player.size*2)
         }
     }
     setHealthState(state) {

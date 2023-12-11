@@ -213,6 +213,7 @@ function startGame() {
     } else {
         nightLevel = false
     }
+    startsound.play()
     renderGame()
 }
 
@@ -488,7 +489,7 @@ function continueFromGameOver() {
     score = 0
     game.setScoreState(score)
     frameCount = 0
-    bubbleCap += 2
+    bubbleCap += 1
     round += 1
     startGame()
 }
