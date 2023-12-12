@@ -366,7 +366,7 @@ function detectPlayerPop() {
 }
 function becomePoisoned() {
     poisoned = true
-    playerSize = bubbleFrame * 2
+    playerSize = bubbleFrame * 1.5
     playerCollissionRange = playerSize/2
 }
 function restoreSize() {
