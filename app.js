@@ -264,9 +264,10 @@ canvas1.addEventListener("touchstart",touchCanvas)
 canvas1.addEventListener("touchmove",touchCanvas)
 function touchCanvas(event) {
     event.preventDefault()
+    const canvasLoc = event.target.getBoundingClientRect()
     const touch = event.touches[0]
-    mouseObj.x = touch.pageX
-    mouseObj.y = touch.pageY
+    mouseObj.x = touch.clientX - canvasLoc.x
+    mouseObj.y = touch.clientY - canvasLoc.y
     mouseObj.click = true
 }
 canvas1.addEventListener("touchend",()=>{
