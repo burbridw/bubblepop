@@ -213,7 +213,7 @@ function startGame() {
     } else {
         nightLevel = false
     }
-    startsound.play()
+    if ( audioOn ) startsound.play()
     renderGame()
 }
 
